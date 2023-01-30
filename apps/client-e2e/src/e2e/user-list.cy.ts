@@ -5,7 +5,7 @@ describe("Navigate to All Users", () => {
     cy.get("#password").type("adminpassword");
     cy.get("button").click();
 
-    cy.get("a").contains("All Users").click();
+    cy.get("a").contains("All Users.tsx").click();
 
     cy.get("tr").then((rows) => {
       let adminCount = 0;
