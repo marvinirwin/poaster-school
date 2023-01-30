@@ -5,7 +5,7 @@ import NxWelcome from './nx-welcome';
 export function App() {
   return (
     <>
-      <NxWelcome title="client" />
+      <div className="bg-indigo-500 p-2 font-mono">Hello!</div>
       <div />
     </>
   );
