@@ -1,22 +1,33 @@
 import React, {useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
+import useFetchWithError from "../lib/fetchWithError";
+import {apiUrl} from "../lib/ApiUrl";
 
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  /*
-    const handleLogin = () => {
-      // perform login logic here
-      navigate({pathname: '/', search: location.search});
-    };
-  */
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const fetchWithError = useFetchWithError();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     // Your authentication logic goes here
-    navigate('/dashboard');
+    const responseJson = await fetchWithError({
+      fetchParams: [
+        apiUrl("login"),
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email,
+            password
+          })
+        }
+      ],
+      errorMessage: "Login failed, please try again or contact us"
+    });
+    // If there is no error
+    navigate({pathname: 'home', search: location.search})
   };
 
   const handleGoogleLogin = () => {
@@ -32,7 +43,7 @@ export const Login: React.FC = () => {
             <a href="#" className="inline-flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
               <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
                    alt="logo"/>
-                Poaster School
+              Poaster School
             </a>
             <h1 className="mb-2 text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
               Welcome back
@@ -90,7 +101,7 @@ export const Login: React.FC = () => {
                   </svg>
                   Sign in with Google
                 </a>
-{/*
+                {/*
                 <a href="#"
                    className="w-full inline-flex items-center justify-center py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                   <svg className="w-5 h-5 mr-2 text-gray-900 dark:text-white" viewBox="0 0 21 20" fill="none"

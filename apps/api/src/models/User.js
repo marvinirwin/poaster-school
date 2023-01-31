@@ -27,7 +27,11 @@ const userSchema = new mongoose.Schema({
     gender: String,
     location: String,
     website: String,
-    picture: String
+    picture: String,
+    isAdmin: Boolean,
+    isStudent: Boolean,
+    isTeacher: Boolean,
+    students: Array
   }
 }, { timestamps: true });
 

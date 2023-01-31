@@ -31,6 +31,7 @@ const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
+const testController = require('./controllers/test');
 
 /**
  * API keys and Passport configuration.
@@ -172,6 +173,11 @@ app.get('/api/google/sheets', passportConfig.isAuthenticated, passportConfig.isA
 app.get('/api/quickbooks', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getQuickbooks);
 
 /**
+ * Testing routes
+ */
+app.post('/api/test/seed', testController.postSeed);
+
+/**
  * OAuth authentication routes. (Sign in)
  */
 app.get('/auth/instagram', passport.authenticate('instagram', { scope: ['basic', 'public_content'] }));
@@ -231,6 +237,7 @@ app.get('/auth/quickbooks/callback', passport.authorize('quickbooks', { failureR
   res.redirect(req.session.returnTo);
 });
 
+
 /**
  * Error Handler.
  */
@@ -247,9 +254,16 @@ if (process.env.NODE_ENV === 'development') {
 /**
  * Start Express server.
  */
+/*
 app.listen(app.get('port'), () => {
   console.log(`App is running on http://localhost:${app.get('port')} in ${app.get('env')} mode`);
   console.log('Press CTRL-C to stop');
 });
+*/
+const port = process.env.PORT || 3333;
+const server = app.listen(port, () => {
+  console.log(`Listening at http://localhost:${port}/api`);
+});
+server.on('error', console.error);
 
 module.exports = app;
