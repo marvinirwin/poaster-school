@@ -57,9 +57,10 @@ mongoose.connection.on('error', (err) => {
  * Express configuration.
  */
 app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
-app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080);
+app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3333);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+app.use(express.json());
 app.use(compression());
 app.use(sass({
   src: path.join(__dirname, 'public'),
@@ -79,16 +80,21 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 app.use((req, res, next) => {
+  next();
   if (req.path === '/api/upload') {
     // Multer multipart/form-data handling needs to occur before the Lusca CSRF check.
-    next();
+    //next();
   } else {
-    lusca.csrf()(req, res, next);
+    // lusca.csrf()(req, res, next);
   }
 });
+/*
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
+*/
+/*
 app.disable('x-powered-by');
+*/
 app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
@@ -118,24 +124,24 @@ app.use('/webfonts', express.static(path.join(__dirname, 'node_modules/@fortawes
  * Primary app routes.
  */
 app.get('/', homeController.index);
-app.get('/login', userController.getLogin);
-app.post('/login', userController.postLogin);
-app.get('/logout', userController.logout);
-app.get('/forgot', userController.getForgot);
-app.post('/forgot', userController.postForgot);
-app.get('/reset/:token', userController.getReset);
-app.post('/reset/:token', userController.postReset);
-app.get('/signup', userController.getSignup);
-app.post('/signup', userController.postSignup);
-app.get('/contact', contactController.getContact);
-app.post('/contact', contactController.postContact);
-app.get('/account/verify', passportConfig.isAuthenticated, userController.getVerifyEmail);
-app.get('/account/verify/:token', passportConfig.isAuthenticated, userController.getVerifyEmailToken);
-app.get('/account', passportConfig.isAuthenticated, userController.getAccount);
-app.post('/account/profile', passportConfig.isAuthenticated, userController.postUpdateProfile);
-app.post('/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);
-app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
-app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
+app.get('/api/login', userController.getLogin);
+app.post('/api/login', userController.postLogin);
+app.get('/api/logout', userController.logout);
+app.get('/api/forgot', userController.getForgot);
+app.post('/api/forgot', userController.postForgot);
+app.get('/api/reset/:token', userController.getReset);
+app.post('/api/reset/:token', userController.postReset);
+app.get('/api/signup', userController.getSignup);
+app.post('/api/signup', userController.postSignup);
+app.get('/api/contact', contactController.getContact);
+app.post('/api/contact', contactController.postContact);
+app.get('/api/account/verify', passportConfig.isAuthenticated, userController.getVerifyEmail);
+app.get('/api/account/verify/:token', passportConfig.isAuthenticated, userController.getVerifyEmailToken);
+app.get('/api/account', passportConfig.isAuthenticated, userController.getAccount);
+app.post('/api/account/profile', passportConfig.isAuthenticated, userController.postUpdateProfile);
+app.post('/api/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);
+app.post('/api/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
+app.get('/api/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
 
 /**
  * API examples routes.
@@ -171,6 +177,11 @@ app.get('/api/google/drive', passportConfig.isAuthenticated, passportConfig.isAu
 app.get('/api/chart', apiController.getChart);
 app.get('/api/google/sheets', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getGoogleSheets);
 app.get('/api/quickbooks', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getQuickbooks);
+
+/**
+ * CRUD routers
+ */
+app.get('/api/users', passportConfig.isAuthenticated, userController.getUsers);
 
 /**
  * Testing routes
@@ -260,7 +271,7 @@ app.listen(app.get('port'), () => {
   console.log('Press CTRL-C to stop');
 });
 */
-const port = process.env.PORT || 3333;
+const port = app.get('port');
 const server = app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}/api`);
 });

@@ -4,9 +4,9 @@ import {useEffect} from "react";
 export const useNavigateToLoginIfNotAuthenticated = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isLoggedIn = false;
+  const isLoggedIn = true;
   useEffect(() => {
-    if (isLoggedIn) {
+    if (!isLoggedIn) {
       navigate({pathname: '/login', search: location.search})
     }
   }, [])
