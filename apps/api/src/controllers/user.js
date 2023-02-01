@@ -69,7 +69,8 @@ exports.getLogin = (req, res) => {
  */
 exports.postLogin = (req, res, next) => {
   const validationErrors = [];
-  if (!validator.isEmail(req.body.email)) validationErrors.push({msg: 'Please enter a valid email address.'});
+  const email = req.body.email;
+  if (!validator.isEmail(email)) validationErrors.push({msg: 'Please enter a valid email address.'});
   if (validator.isEmpty(req.body.password)) validationErrors.push({msg: 'Password cannot be blank.'});
 
   if (validationErrors.length) {
@@ -77,7 +78,7 @@ exports.postLogin = (req, res, next) => {
     res.json({validationErrors})
     return;
   }
-  req.body.email = validator.normalizeEmail(req.body.email, {gmail_remove_dots: false});
+  req.body.email = validator.normalizeEmail(email, {gmail_remove_dots: false});
 
   passport.authenticate('local', (err, user, info) => {
     if (err) {
@@ -88,12 +89,20 @@ exports.postLogin = (req, res, next) => {
       res.json({errors: info});
       return;
     }
-    req.logIn(user, (err) => {
+    req.logIn(user, async (err) => {
       if (err) {
         return next(err);
       }
       res.status(200)
       res.json({msg: 'Success! You are logged in.'});
+
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new Error(`User with email ${email} not found`);
+      }
+
+      user.lastLogin = new Date();
+      await user.save();
     });
   })(req, res, next);
 };
@@ -577,7 +586,7 @@ exports.getUsers = async (req, res) => {
   const currentUser = req.user;
   const send = result => {
     res.status(200);
-    res.json({result: result})
+    res.json({result: result.map(({profile, _id, email}) => ({...profile, id: _id, email}))})
   };
   if (currentUser.profile.isAdmin) {
     send(await User.find().exec());

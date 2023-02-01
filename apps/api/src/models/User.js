@@ -32,7 +32,10 @@ const userSchema = new mongoose.Schema({
     isStudent: Boolean,
     isTeacher: Boolean,
     students: Array
-  }
+  },
+
+  lastLogin: Date
+
 }, { timestamps: true });
 
 /**

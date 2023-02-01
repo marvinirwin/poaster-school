@@ -5,17 +5,19 @@ import {apiUrl} from "../ApiUrl";
 import {digitalassetlinks_v1} from "googleapis";
 
 export type UserProfile = {
-  name: string,
-  gender: string,
-  location: string,
-  website: string,
-  picture: string,
+  name?: string,
+  gender?: string,
+  location?: string,
+  website?: string,
+  picture?: string,
   isAdmin: boolean,
   isStudent: boolean,
   isTeacher: boolean,
   students: boolean,
 
   id: string;
+
+  email: string;
 }
 
 export const useFetchedData = <T>(
