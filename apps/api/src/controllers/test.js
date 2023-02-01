@@ -10,6 +10,7 @@ exports.postSeed = async (req, res) => {
     ['teacher2'],
     ['student1'],
     ['student2'],
+    ['student3'],
     ['student4'],
     ['student5'],
   ].map(async ([label]) => {
