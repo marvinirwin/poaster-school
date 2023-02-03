@@ -2,7 +2,6 @@ import React, {useMemo, useState} from "react";
 import {flatten} from "lodash";
 import {flextree} from 'd3-flextree';
 import TreeNode from "./TreeNode";
-import {admin_reports_v1} from "googleapis";
 
 export type SkillTreeNodeCustomProperties = { title: string, content: React.ReactNode };
 
@@ -62,7 +61,7 @@ export const SkillTree: React.FC<{ tree: SkillTreeNode }> = ({tree}) => {
         .map(treeNode => {
             const isExpanded = Boolean(expandedState[treeNode.data.id])
             return <TreeNode
-              key={Math.random()}
+              key={treeNode.data.id}
               style={{
                 position: 'absolute',
                 left: `${treeNode.left + Math.abs(minLeft)}px`,
@@ -72,7 +71,8 @@ export const SkillTree: React.FC<{ tree: SkillTreeNode }> = ({tree}) => {
                 maxWidth: maxWidth + 'px',
                 maxHeight: maxHeight + 'px',
                 overflowWrap: 'anywhere',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                transition: '1s'
               }}
               onExpandToggled={(expanded: boolean) => {
                 setExpandedState(currentExpandedState => ({
