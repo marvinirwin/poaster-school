@@ -25,6 +25,7 @@ describe("Navigate to All Users", () => {
       expect(adminCount).to.equal(2);
       expect(teacherCount).to.equal(2);
       expect(studentCount).to.equal(5);
+
     });
   });
 });

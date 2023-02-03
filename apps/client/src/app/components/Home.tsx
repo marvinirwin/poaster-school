@@ -1,7 +1,7 @@
 import {useNavigateToLoginIfNotAuthenticated} from "../lib/useNavigateToLoginIfNotAuthenticated";
-import { Users } from "./Users";
+import { UserList } from "./UserList";
 
 export const Home = () => {
   useNavigateToLoginIfNotAuthenticated();
-  return <Users/>
+  return <UserList/>
 }

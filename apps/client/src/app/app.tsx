@@ -1,14 +1,19 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, {useMemo} from 'react';
-import {createBrowserRouter, Route, RouterProvider,} from 'react-router-dom';
-import {UserDetail} from "./components/User";
+import {createBrowserRouter, Route, RouterProvider, useParams,} from 'react-router-dom';
+import {UserInfo} from "./components/User";
 import {UserSubjects} from "./components/Subjects";
 import {Login} from "./components/Login";
 import {Logout} from "./components/Logout";
-import {Users} from "./components/Users";
+import {UserList} from "./components/UserList";
 import {Home} from "./components/Home";
 import {ToastList} from "./components/ToastList";
 import {ErrorProvider, useError} from "./lib/ErrorContext";
+
+const UserInfoRoute = () => {
+  const {userId} = useParams();
+  return <UserInfo userId={userId as string} />
+}
 
 const router = createBrowserRouter([
   {
@@ -20,8 +25,12 @@ const router = createBrowserRouter([
     element: <Login/>
   },
   {
-    path: '/users',
-    element: <Users/>
+    path: '/user/list',
+    element: <UserList/>
+  },
+  {
+    path: '/user/:userId',
+    element: <UserInfoRoute/>
   }
 ]);
 
