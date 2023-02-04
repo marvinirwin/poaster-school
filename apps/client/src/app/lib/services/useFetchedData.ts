@@ -91,7 +91,7 @@ export const useFetchWithBodyCallback = <T>(
   };
 }
 export const useUsers = () => useFetchedData<UserProfile[]>({
-  url: apiUrl('users'),
+  url: apiUrl('user/list'),
   loadingMessage: 'Fetching user list',
   errorMessage: "Fetching user list failed.  Please refresh the page or contact us"
 })
@@ -99,7 +99,7 @@ export const useUsers = () => useFetchedData<UserProfile[]>({
 export const useUser = (userId: string) => {
   return useFetchedData<UserProfile>({
     url: useMemo(() => {
-      return apiUrl(`users/${userId}`)
+      return apiUrl(`user/${userId}`)
     }, [userId]),
     loadingMessage: 'Fetching user',
     errorMessage: `Fetching user userId: "${userId}" failed.  Please refresh the page or contact us`

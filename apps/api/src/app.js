@@ -192,6 +192,7 @@ app.get('/api/quickbooks', passportConfig.isAuthenticated, passportConfig.isAuth
  * CRUD routers
  */
 app.get('/api/user/list', passportConfig.isAuthenticated, userController.getUsers);
+app.get('/api/user/:userId', passportConfig.isAuthenticated, userController.getUser);
 app.put('/api/user/:userId/skill', passportConfig.isAuthenticated, userController.putUserSkill)
 
 /**

@@ -20,9 +20,12 @@ exports.postSeed = async (req, res) => {
       email: email,
       password: label,
       profile: {
+        subjectStatuses: {
+        },
         isAdmin: label.includes('admin'),
         isStudent: label.includes('student'),
         isTeacher: label.includes('teacher'),
+        students: []
       }
     });
     if (existingUser) {
@@ -46,7 +49,6 @@ exports.postSeed = async (req, res) => {
         await testUser.set({
           'profile.students': students1
         })
-        await testUser.save();
       } else {
         let students2 = students.filter(student => {
           const number = parseInt(student.email[7]);
@@ -55,9 +57,9 @@ exports.postSeed = async (req, res) => {
         await testUser.set({
           'profile.students': students2
         })
-        await testUser.save();
       }
     }
+    await testUser.save();
   }
   res.status(200);
   res.json({message: "Seeding complete!"})

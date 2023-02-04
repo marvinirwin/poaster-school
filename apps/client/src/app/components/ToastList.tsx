@@ -102,7 +102,7 @@ export const ToastList: React.FC<ToastProps> = ({ items }) => {
   };
 
   return (
-    <div style={{ position: 'fixed', top: '50%', left: '50%' }}>
+    <div style={{ position: 'fixed', zIndex: '2' }}>
       {displayedItems.map(item => (
         <div key={item.id} onClick={() => handleRemoveItem(item.id)}>
           {item.text}

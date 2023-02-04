@@ -10,10 +10,17 @@ const User = require('../models/User');
 
 const randomBytesAsync = promisify(crypto.randomBytes);
 
-const sendUser = (req, res) => user => {
+const userObjectToUserProfileObject = ({profile, _id, email}) => ({...profile, id: _id, email});
+
+const sendUsers = (req, res) => users => {
   res.status(200);
-  res.json({result: user.map(({profile, _id, email}) => ({...profile, id: _id, email}))})
+  res.json({result: users.map(userObjectToUserProfileObject)})
 };
+const sendUser = (req, res) => user => {
+  const {profile, _id, email} = user;
+  res.status(200);
+  res.json({result: userObjectToUserProfileObject({profile, _id, email})});
+}
 
 /**
  * Helper Function to Send Mail.
@@ -589,7 +596,7 @@ exports.postForgot = (req, res, next) => {
 exports.getUsers = async (req, res) => {
   // TODO figure out where this user object comes from
   const currentUser = req.user;
-  const send = sendUser(req, res);
+  const send = sendUsers(req, res);
   if (currentUser.profile.isAdmin) {
     send(await User.find().exec());
     return;
@@ -615,7 +622,7 @@ exports.putUserSkill = async (res, req) => {
   const userNotFoundMessage = `Could not find user with id: ${userId}`;
   const permissionErrorMessage = `You do not have permission to update this user's skills: ${userId}`;
 
-  const send = sendUser(req, res);
+  const send = sendUsers(req, res);
 
   const setUserSkillStatus = async user => {
     await user.set('profile', {
@@ -659,4 +666,11 @@ exports.putUserSkill = async (res, req) => {
     return;
   }
   setStatusCodeAndError(400, permissionErrorMessage);
+}
+
+exports.getUser = async (req, res) => {
+  // TODO use this to restrict which users can see which other users
+  const currentUser = req.user;
+  const send = sendUser(req, res);
+  send(await User.findById(req.params.userId).exec());
 }

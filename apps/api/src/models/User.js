@@ -1,6 +1,7 @@
 const bcrypt = require('@node-rs/bcrypt');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+const {Schema} = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
@@ -32,7 +33,10 @@ const userSchema = new mongoose.Schema({
     isStudent: Boolean,
     isTeacher: Boolean,
     students: Array,
-    subjectStatuses: Object
+    subjectStatuses: {
+      type: Map,
+      of: String
+    }
   },
 
   lastLogin: Date
