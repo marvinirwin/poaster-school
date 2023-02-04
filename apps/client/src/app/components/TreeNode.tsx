@@ -2,7 +2,13 @@ import React from "react";
 
 export const classNames = (...classNames: (string | null | undefined)[]) => classNames.filter(Boolean).join(' ')
 
-export type TreeNodeProps = { title: string, isExpanded: boolean, onExpandToggled: (newState: boolean) => void }
+export type TreeNodeProps = {
+    title: string,
+    isExpanded: boolean,
+    onExpandToggled: (newState: boolean) => void
+    status: string
+    onStatusChanged: (newStatus: string) => void
+  }
   & React.HTMLProps<HTMLDivElement>;
 
 const TreeNode: React.FC<TreeNodeProps> = (
@@ -11,6 +17,8 @@ const TreeNode: React.FC<TreeNodeProps> = (
     isExpanded,
     onExpandToggled,
     className,
+    status,
+    onStatusChanged,
     ...divProps
   }) => {
   return (

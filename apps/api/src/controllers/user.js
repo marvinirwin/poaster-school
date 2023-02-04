@@ -10,6 +10,11 @@ const User = require('../models/User');
 
 const randomBytesAsync = promisify(crypto.randomBytes);
 
+const sendUser = (req, res) => user => {
+  res.status(200);
+  res.json({result: user.map(({profile, _id, email}) => ({...profile, id: _id, email}))})
+};
+
 /**
  * Helper Function to Send Mail.
  */
@@ -584,10 +589,7 @@ exports.postForgot = (req, res, next) => {
 exports.getUsers = async (req, res) => {
   // TODO figure out where this user object comes from
   const currentUser = req.user;
-  const send = result => {
-    res.status(200);
-    res.json({result: result.map(({profile, _id, email}) => ({...profile, id: _id, email}))})
-  };
+  const send = sendUser(req, res);
   if (currentUser.profile.isAdmin) {
     send(await User.find().exec());
     return;
@@ -603,5 +605,58 @@ exports.getUsers = async (req, res) => {
     return;
   }
   console.warn(`Current user is neither an admin, student or teacher: ${JSON.stringify(currentUser)}`)
-  res.sendStatus(400);
+  res.sendStatus(401);
+}
+
+exports.putUserSkill = async (res, req) => {
+  const currentUser = req.user;
+  const {nodeId, status} = req.body;
+  const {userId} = req.params;
+  const userNotFoundMessage = `Could not find user with id: ${userId}`;
+  const permissionErrorMessage = `You do not have permission to update this user's skills: ${userId}`;
+
+  const send = sendUser(req, res);
+
+  const setUserSkillStatus = async user => {
+    await user.set('profile', {
+      ...user.profile,
+      subjectStatuses: {...user.profile.subjectStatuses, [nodeId]: status}
+    });
+
+  };
+
+  const setStatusCodeAndError = (statusCode, message) => {
+    res.status(statusCode);
+    res.json({message: message})
+  };
+
+  const user = await User.findById(userId);
+  if (!user) {
+    setStatusCodeAndError(400, userNotFoundMessage);
+    return;
+  }
+
+  if (currentUser.profile.isAdmin) {
+    await setUserSkillStatus(user);
+    send(user)
+    return;
+  } else if (currentUser.profile.isTeacher) {
+    if (!currentUser.profile.students.includes(userId)) {
+      setStatusCodeAndError(400, permissionErrorMessage);
+      return;
+    }
+    await setUserSkillStatus(user)
+    send(user)
+    return;
+  } else if (currentUser.profile.isStudent) {
+    const isNotUpdatingSelf = !currentUser.id === userId;
+    if (isNotUpdatingSelf) {
+      setStatusCodeAndError(400, permissionErrorMessage);
+      return;
+    }
+    await setUserSkillStatus(user);
+    send(user)
+    return;
+  }
+  setStatusCodeAndError(400, permissionErrorMessage);
 }

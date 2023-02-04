@@ -31,7 +31,8 @@ const userSchema = new mongoose.Schema({
     isAdmin: Boolean,
     isStudent: Boolean,
     isTeacher: Boolean,
-    students: Array
+    students: Array,
+    subjectStatuses: Object
   },
 
   lastLogin: Date

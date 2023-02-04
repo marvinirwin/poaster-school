@@ -9,10 +9,15 @@ import {UserList} from "./components/UserList";
 import {Home} from "./components/Home";
 import {ToastList} from "./components/ToastList";
 import {ErrorProvider, useError} from "./lib/ErrorContext";
+import {useUser} from "./lib/services/useFetchedData";
+import {LoadingSpinner} from "./components/LoadingSpinner";
+
 
 const UserInfoRoute = () => {
   const {userId} = useParams();
-  return <UserInfo userId={userId as string} />
+  const {isLoading, result: userProfile, setResult: setUserProfile} = useUser(userId || "");
+  return isLoading ? <LoadingSpinner/> : (userProfile ?
+    <UserInfo userProfile={userProfile} setUserProfile={setUserProfile}/> : <>'Error fetching user info'</>)
 }
 
 const router = createBrowserRouter([
