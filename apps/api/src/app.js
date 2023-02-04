@@ -29,6 +29,7 @@ dotenv.config({ path: '.env.example' });
  */
 const homeController = require('./controllers/home');
 const userController = require('./controllers/user');
+const nodeController = require('./controllers/node');
 const apiController = require('./controllers/api');
 const contactController = require('./controllers/contact');
 const testController = require('./controllers/test');
@@ -194,6 +195,7 @@ app.get('/api/quickbooks', passportConfig.isAuthenticated, passportConfig.isAuth
 app.get('/api/user/list', passportConfig.isAuthenticated, userController.getUsers);
 app.get('/api/user/:userId', passportConfig.isAuthenticated, userController.getUser);
 app.put('/api/user/:userId/skill', passportConfig.isAuthenticated, userController.putUserSkill)
+app.put('/api/node/:nodeId/update', passportConfig.isAuthenticated, nodeController.putNodeUpdate)
 
 /**
  * Testing routes

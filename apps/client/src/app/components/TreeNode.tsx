@@ -8,6 +8,7 @@ export type TreeNodeProps = {
     onExpandToggled: (newState: boolean) => void
     status: string
     onStatusChanged: (newStatus: string) => void
+    onShowContent: () => void
   }
   & React.HTMLProps<HTMLDivElement>;
 
@@ -19,6 +20,7 @@ const TreeNode: React.FC<TreeNodeProps> = (
     className,
     status,
     onStatusChanged,
+    onShowContent,
     ...divProps
   }) => {
   return (
@@ -44,6 +46,7 @@ const TreeNode: React.FC<TreeNodeProps> = (
         <button
           className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 flex-grow"
           onClick={() => {
+            onShowContent()
           }}
         >
           Content

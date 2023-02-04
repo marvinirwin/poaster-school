@@ -3,12 +3,12 @@ import {flatten} from "lodash";
 import {flextree} from 'd3-flextree';
 import TreeNode from "./TreeNode";
 import {useFetchWithBodyCallback, UserProfile} from "../lib/services/useFetchedData";
-import {setSubjectStatusForUser} from "../lib/services/usePost";
+import {SkillModal} from "./SkillModal";
 
 const maxHeight = 200;
 const maxWidth = 200;
 
-export type SkillTreeNodeCustomProperties = { title: string, content: React.ReactNode };
+export type SkillTreeNodeCustomProperties = { title: string, content: string };
 
 export type CustomizableTree<T> = {
   children: CustomizableTree<T>[]
@@ -29,6 +29,9 @@ export const SkillTree: React.FC<{
     userProfile,
     setUserProfile
   }) => {
+
+  const [selectedNode, setSelectedNode] = useState<SkillTreeNode | null>(null);
+  const canEdit = userProfile.isTeacher;
   const [expandedState, setExpandedState] = useState<Record<string, boolean>>({});
   const {nodes, minLeft, minTop} = useMemo(() => {
     const giveHeightAndWidth = (drawTree: SkillTreeNode): SizedTree => {
@@ -63,50 +66,75 @@ export const SkillTree: React.FC<{
   }, [tree, expandedState]);
   const {
     func: setSkillStatus,
-    isFetchInProgress
+    isFetchInProgress: isSettingSkillStatusInProgress
   } = useFetchWithBodyCallback({
     url: `/api/user/${userProfile.id}/skill`,
     loadingMessage: "Updating skill",
     errorMessage: "Error updating skill.  Please try again or contact us",
     method: "PUT"
+  });
+  const {
+    func: updateNode,
+    isFetchInProgress: isUpdatingNode,
+  } = useFetchWithBodyCallback({
+    url: `/api/node/${selectedNode?.id}/update`,
+    loadingMessage: "Updating skill tree content",
+    errorMessage: "Error updating skill tree content.  Please try again or contact us",
+    method: "PUT"
   })
 
-  return <div style={{position: 'relative'}}>
+  // TODO maybe add a specific role for this
+
+  return <>
     {
-      nodes
-        .map(treeNode => {
-            const isExpanded = Boolean(expandedState[treeNode.data.id])
-            return <TreeNode
-              onStatusChanged={(newStatus: string) => {
-                const nodeId = treeNode.data.id;
-                setSkillStatus({nodeId: nodeId, status: newStatus, userId: userProfile.id})
-                  .then(newUserProfile => setUserProfile(newUserProfile))
-              }}
-              key={treeNode.data.id}
-              status={userProfile.subjectStatuses[treeNode.data.id]}
-              style={{
-                position: 'absolute',
-                left: `${treeNode.left + Math.abs(minLeft)}px`,
-                top: `${treeNode.top + Math.abs(minTop)}px`,
-                width: maxWidth + 'px',
-                height: 'auto',
-                maxWidth: maxWidth + 'px',
-                maxHeight: maxHeight + 'px',
-                overflowWrap: 'anywhere',
-                overflow: 'hidden',
-                transition: '1s'
-              }}
-              onExpandToggled={(expanded: boolean) => {
-                setExpandedState(currentExpandedState => ({
-                  ...currentExpandedState,
-                  [treeNode.data.id]: expanded
-                }))
-              }}
-              isExpanded={isExpanded}
-              title={`${treeNode.data.title || JSON.stringify(treeNode.data)}`}
-            />;
+      selectedNode ? <SkillModal
+          content={selectedNode.content}
+          title={selectedNode.title}
+          setContent={
+            newContent => updateNode({})
           }
-        )
+          canEdit={canEdit}
+        />
+        : null
     }
-  </div>
+    <div style={{position: 'relative'}}>
+      {
+        nodes
+          .map(treeNode => {
+              const isExpanded = Boolean(expandedState[treeNode.data.id])
+            return <TreeNode
+                onStatusChanged={(newStatus: string) => {
+                  const nodeId = treeNode.data.id;
+                  setSkillStatus({nodeId: nodeId, status: newStatus, userId: userProfile.id})
+                    .then(newUserProfile => setUserProfile(newUserProfile))
+                }}
+                key={treeNode.data.id}
+                status={userProfile.subjectStatuses[treeNode.data.id]}
+                onShowContent={() => setSelectedNode(treeNode.data)}
+                style={{
+                  position: 'absolute',
+                  left: `${treeNode.left + Math.abs(minLeft)}px`,
+                  top: `${treeNode.top + Math.abs(minTop)}px`,
+                  width: maxWidth + 'px',
+                  height: 'auto',
+                  maxWidth: maxWidth + 'px',
+                  maxHeight: maxHeight + 'px',
+                  overflowWrap: 'anywhere',
+                  overflow: 'hidden',
+                  transition: '1s'
+                }}
+                onExpandToggled={(expanded: boolean) => {
+                  setExpandedState(currentExpandedState => ({
+                    ...currentExpandedState,
+                    [treeNode.data.id]: expanded
+                  }))
+                }}
+                isExpanded={isExpanded}
+                title={`${treeNode.data.title || JSON.stringify(treeNode.data)}`}
+              />;
+            }
+          )
+      }
+    </div>
+  </>
 }
