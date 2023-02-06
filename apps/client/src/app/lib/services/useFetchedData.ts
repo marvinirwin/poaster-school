@@ -74,7 +74,7 @@ export const useFetchWithBodyCallback = <T>(
   const fetchWithError = useFetchWithError();
   const [isFetchInProgress, setIsFetchInProgress] = useState<boolean>(false);
   return {
-    func: useCallback(async ({body, url: newUrl}: { body: any, url?: string }) => {
+    func: useCallback(async ({body, url: newUrl}: { body: any, url?: string }): Promise<T> => {
       setIsFetchInProgress(true);
       const result = await fetchWithError({
         fetchParams: [

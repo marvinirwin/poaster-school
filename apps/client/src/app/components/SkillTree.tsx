@@ -5,6 +5,7 @@ import TreeNode from "./TreeNode";
 import {SubjectNode, useFetchWithBodyCallback, useNodes, UserProfile} from "../lib/services/useFetchedData";
 import {SkillModal} from "./SkillModal";
 import {UserContext} from "../lib/LoggedInUserContext";
+import {useClosableModal} from "../lib/UseClosableModal";
 
 const maxHeight = 200;
 const maxWidth = 200;
@@ -36,6 +37,7 @@ export const SkillTree: React.FC<{
   const canEdit = Boolean(user?.isAdmin || user?.isTeacher);
   const {
     result: nodeConfigurations,
+    setResult: setNodeConfigurations,
     isLoading: isNodeListFetchInProgress
   } = useNodes();
   const nodeConfigurationMap = useMemo(() => {
@@ -78,7 +80,7 @@ export const SkillTree: React.FC<{
   const {
     func: setSkillStatus,
     isFetchInProgress: isSettingSkillStatusInProgress
-  } = useFetchWithBodyCallback({
+  } = useFetchWithBodyCallback<UserProfile>({
     url: `/api/user/${userProfile.id}/skill`,
     loadingMessage: "Updating skill",
     errorMessage: "Error updating skill.  Please try again or contact us",
@@ -87,7 +89,7 @@ export const SkillTree: React.FC<{
   const {
     func: updateNode,
     isFetchInProgress: isUpdatingNode,
-  } = useFetchWithBodyCallback({
+  } = useFetchWithBodyCallback<SubjectNode>({
     url: `/api/node/${selectedNode?.id || getDefaultNodeId(selectedNode || undefined)}/update`,
     loadingMessage: "Updating skill tree content",
     errorMessage: "Error updating skill tree content.  Please try again or contact us",
@@ -101,10 +103,10 @@ export const SkillTree: React.FC<{
   return <>
     {
       selectedNode ? <SkillModal
-          content={selectedNode.content}
-          title={selectedNode.title}
+          content={selectedNodeConfiguration.content || selectedNode?.content}
+          title={selectedNodeConfiguration.title || selectedNode?.title}
           setContent={
-            newContent => {
+            async newContent => {
               let node: SubjectNode;
               if (!selectedNodeConfiguration) {
                 // Create a new one
@@ -120,11 +122,12 @@ export const SkillTree: React.FC<{
                   content: newContent,
                 }
               }
-              updateNode({
+              const result = await updateNode({
                   body: node,
                   url: `/api/node/${selectedNode.id || getDefaultNodeId(selectedNode)}/update`
                 }
-              ).then();
+              );
+              setNodeConfigurations(nodeConfigurations?.filter(v => v.id !== result.id)?.concat(result) || [])
             }
           }
           canEdit={canEdit}
@@ -138,7 +141,7 @@ export const SkillTree: React.FC<{
           .map(treeNode => {
               const isExpanded = Boolean(expandedState[treeNode.data.id])
               return <TreeNode
-                onStatusChanged={(newStatus: string) => {
+                onStatusChanged={async (newStatus: string) => {
                   const nodeId = treeNode.data.id;
                   setSkillStatus({
                     body: {
