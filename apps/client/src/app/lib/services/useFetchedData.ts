@@ -34,7 +34,7 @@ export const useFetchedData = <T>(
   }) => {
   const fetchWithError = useFetchWithError();
   const [result, setResult] = useState<T | null>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean | undefined>(undefined);
   useEffect(() => {
     (async () => {
       setIsLoading(true);
@@ -52,7 +52,7 @@ export const useFetchedData = <T>(
   return {
     result,
     isLoading,
-    setResult
+    setResult,
   };
 }
 

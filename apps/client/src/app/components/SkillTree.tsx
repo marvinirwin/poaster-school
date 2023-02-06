@@ -142,7 +142,9 @@ export const SkillTree: React.FC<{
                   const nodeId = treeNode.data.id;
                   setSkillStatus({
                     body: {
-                      nodeId: nodeId, status: newStatus, userId: userProfile.id
+                      nodeId: nodeId,
+                      status: newStatus,
+                      userId: userProfile.id
                     }
                   }).then(newUserProfile => setUserProfile(newUserProfile))
                 }}

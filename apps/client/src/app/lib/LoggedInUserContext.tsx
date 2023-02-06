@@ -26,7 +26,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({children}
   } = useLoggedInUser();
 
   useEffect(() => {
-    if (!isLoading) {
+    if (isLoading === false) {
       setUser(result || null)
       setAuthenticated(Boolean(result))
     }
