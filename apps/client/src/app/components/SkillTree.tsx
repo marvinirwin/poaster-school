@@ -136,7 +136,9 @@ export const SkillTree: React.FC<{
                 }}
                 key={treeNode.data.id}
                 status={userProfile.subjectStatuses[treeNode.data.id]}
-                onShowContent={() => setSelectedNode(treeNode.data)}
+                onShowContent={() => {
+                  setSelectedNode(treeNode.data);
+                }}
                 style={{
                   position: 'absolute',
                   left: `${treeNode.left + Math.abs(minLeft)}px`,
