@@ -1,8 +1,8 @@
 import React, {useMemo, useState} from "react";
-import {flatten} from "lodash";
+import {camelCase, flatten} from "lodash";
 import {flextree} from 'd3-flextree';
 import TreeNode from "./TreeNode";
-import {useFetchWithBodyCallback, UserProfile} from "../lib/services/useFetchedData";
+import {SubjectNode, useFetchWithBodyCallback, useNodes, UserProfile} from "../lib/services/useFetchedData";
 import {SkillModal} from "./SkillModal";
 
 const maxHeight = 200;
@@ -29,11 +29,17 @@ export const SkillTree: React.FC<{
     userProfile,
     setUserProfile
   }) => {
-
-  const [selectedNode, setSelectedNode] = useState<SkillTreeNode | null>(null);
   const canEdit = userProfile.isTeacher;
+  const {
+    result: nodeConfigurations,
+    isLoading: isNodeListFetchInProgress
+  } = useNodes();
+  const nodeConfigurationMap = useMemo(() => {
+    return Object.fromEntries((nodeConfigurations || []).map((nodeConfiguration) => [nodeConfiguration.id, nodeConfiguration])) as Record<string, SubjectNode>
+  }, [nodeConfigurations])
+  const [selectedNode, setSelectedNode] = useState<SkillTreeNode | null>(null);
   const [expandedState, setExpandedState] = useState<Record<string, boolean>>({});
-  const {nodes, minLeft, minTop} = useMemo(() => {
+  const {nodes: flattenedTreeNodes, minLeft, minTop} = useMemo(() => {
     const giveHeightAndWidth = (drawTree: SkillTreeNode): SizedTree => {
       const isExpanded = Boolean(expandedState[drawTree.id]);
       return {
@@ -50,7 +56,7 @@ export const SkillTree: React.FC<{
     const layout = flextree({});
     let minLeft: number = 0;
     let minTop: number = 0;
-    const nodes: any[] = []
+    const nodes: { data: SkillTreeNode, left: number, top: number }[] = []
     const hierarchy = layout.hierarchy(giveHeightAndWidth(tree));
     layout(hierarchy)
     hierarchy.each(n => {
@@ -60,6 +66,7 @@ export const SkillTree: React.FC<{
       if (n.top < minTop) {
         minTop = n.top;
       }
+      //@ts-ignore
       nodes.push(n);
     });
     return {nodes, minLeft, minTop};
@@ -85,24 +92,43 @@ export const SkillTree: React.FC<{
 
   // TODO maybe add a specific role for this
 
+  const selectedNodeConfiguration = nodeConfigurationMap[selectedNode?.id || ""];
   return <>
     {
       selectedNode ? <SkillModal
           content={selectedNode.content}
           title={selectedNode.title}
           setContent={
-            newContent => updateNode({})
+            newContent => {
+              let node: SubjectNode;
+              if (!selectedNodeConfiguration) {
+                // Create a new one
+                node = {
+                  content: newContent,
+                  title: selectedNode.title,
+                  topicFrames: [],
+                  id: camelCase(selectedNode.title)
+                }
+              } else {
+                node = {
+                  ...selectedNodeConfiguration,
+                  content: newContent,
+                }
+              }
+              updateNode(node).then();
+            }
           }
           canEdit={canEdit}
+          topicFrames={selectedNodeConfiguration?.topicFrames || []}
         />
         : null
     }
     <div style={{position: 'relative'}}>
       {
-        nodes
+        flattenedTreeNodes
           .map(treeNode => {
               const isExpanded = Boolean(expandedState[treeNode.data.id])
-            return <TreeNode
+              return <TreeNode
                 onStatusChanged={(newStatus: string) => {
                   const nodeId = treeNode.data.id;
                   setSkillStatus({nodeId: nodeId, status: newStatus, userId: userProfile.id})

@@ -78,7 +78,7 @@ export const UserList: React.FC = () => {
           </div>
           <nav className="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0" aria-label="Table navigation">
               <div className="flex items-center space-x-3">
-                  <label htmlFor="rows" className="text-xs font-normal text-gray-500 dark:text-gray-400">Rows per page</label><select id="rows" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block py-1.5 pl-3.5 pr-6 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"><option selected value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>
+                  <label htmlFor="rows" className="text-xs font-normal text-gray-500 dark:text-gray-400">Rows per page</label><select id="rows" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block py-1.5 pl-3.5 pr-6 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select>
                   <div className="text-xs font-normal text-gray-500 dark:text-gray-400">
                       <span className="font-semibold text-gray-900 dark:text-white">1-10</span>
                     &nbsp;

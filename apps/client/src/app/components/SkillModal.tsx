@@ -2,16 +2,28 @@ import React, {useEffect, useState} from "react";
 import DOMPurify from 'dompurify';
 import {marked} from "marked";
 import MDEditor from '@uiw/react-md-editor';
-import {useError} from "../lib/ErrorContext";
+import {TopicFrameComponent} from "./TopicFrameComponent";
 
+export type TopicFrame = {
+  target: string;
+  body: string;
+}
 
-type SkillModalProps = { content: string, title: string, setContent: (newContent: string) => void, canEdit: boolean };
+type SkillModalProps = {
+  content: string,
+  title: string,
+  setContent: (newContent: string) => void,
+  canEdit: boolean
+  topicFrames: TopicFrame[]
+};
+
 export const SkillModal: React.FC<SkillModalProps> = (
   {
     title,
     content,
     setContent,
-    canEdit
+    canEdit,
+    topicFrames
   }
 ) => {
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -28,7 +40,6 @@ export const SkillModal: React.FC<SkillModalProps> = (
             {title}
           </h3>
         </div>
-
         {
           !editMode ? <div className="p-6 space-y-6" dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(marked.parse(content))
@@ -50,15 +61,34 @@ export const SkillModal: React.FC<SkillModalProps> = (
             : null
         }
       </div>
-      <div className="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-        <button data-modal-hide="extralarge-modal" type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">I
-          accept
-        </button>
-        <button data-modal-hide="extralarge-modal" type="button"
-                className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Decline
-        </button>
+      <div>
+        {
+          topicFrames.map(topicFrame => {
+            return <TopicFrameComponent topicFrame={topicFrame}/>
+          })
+        }
       </div>
+      {
+        canEdit ?
+          <div className="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+            <button
+              disabled={content === editableContent}
+              data-modal-hide="extralarge-modal"
+              type="button"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >Save
+            </button>
+            <button
+              data-modal-hide="extralarge-modal"
+              type="button"
+              className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+            >
+              Cancel
+            </button>
+          </div>
+          : null
+      }
+
     </div>
   </div>
 }

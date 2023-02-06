@@ -196,6 +196,7 @@ app.get('/api/user/list', passportConfig.isAuthenticated, userController.getUser
 app.get('/api/user/:userId', passportConfig.isAuthenticated, userController.getUser);
 app.put('/api/user/:userId/skill', passportConfig.isAuthenticated, userController.putUserSkill)
 app.put('/api/node/:nodeId/update', passportConfig.isAuthenticated, nodeController.putNodeUpdate)
+app.get('/api/node/list', passportConfig.isAuthenticated, nodeController.getList)
 
 /**
  * Testing routes

@@ -3,6 +3,7 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import useFetchWithError from "../fetchWithError";
 import {apiUrl} from "../ApiUrl";
 import {digitalassetlinks_v1} from "googleapis";
+import {TopicFrame} from "../../components/SkillModal";
 
 export type UserProfile = {
   name?: string,
@@ -105,3 +106,14 @@ export const useUser = (userId: string) => {
     errorMessage: `Fetching user userId: "${userId}" failed.  Please refresh the page or contact us`
   });
 }
+export type SubjectNode = {
+  content: string,
+  title: string,
+  id: string,
+  topicFrames: TopicFrame[]
+}
+export const useNodes = () => useFetchedData<SubjectNode[]>({
+  url: apiUrl('node/list'),
+  loadingMessage: 'Fetching node list',
+  errorMessage: "Fetching node list failed.  Please refresh the page or contact us"
+})
