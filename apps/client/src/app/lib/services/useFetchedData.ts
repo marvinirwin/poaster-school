@@ -62,24 +62,29 @@ export const useFetchWithBodyCallback = <T>(
     url,
     loadingMessage,
     errorMessage,
-    method
+    method,
+    deps
   }: {
     url: string,
     loadingMessage: string,
     errorMessage: string,
-    method: "POST" | "PUT"
+    method: "POST" | "PUT",
+    deps?: any[]
   }) => {
   const fetchWithError = useFetchWithError();
   const [isFetchInProgress, setIsFetchInProgress] = useState<boolean>(false);
   return {
-    func: useCallback(async (body: any) => {
+    func: useCallback(async ({body, url: newUrl}: { body: any, url?: string }) => {
       setIsFetchInProgress(true);
       const result = await fetchWithError({
         fetchParams: [
-          url,
+          newUrl || url,
           {
             body: JSON.stringify(body),
-            method
+            method,
+            headers: {
+              'Content-Type': "application/json"
+            }
           }
         ],
         loadingMessage,
@@ -87,7 +92,7 @@ export const useFetchWithBodyCallback = <T>(
       });
       setIsFetchInProgress(false);
       return result.result;
-    }, []),
+    }, [deps]),
     isFetchInProgress
   };
 }

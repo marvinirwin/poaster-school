@@ -1,6 +1,6 @@
 const Node = require('../models/Node');
 
-exports.putNodeUpdate = async (res, req) => {
+exports.putNodeUpdate = async (req, res) => {
   const {content, title, topicFrames} = req.body;
   const nodeId = req.params.nodeId;
   // Only teachers and admins can update nodes
@@ -10,14 +10,17 @@ exports.putNodeUpdate = async (res, req) => {
   ) {
     return res.status(401).send({message: 'Unauthorized'});
   }
-  let node = Node.find({id: nodeId});
+  let node = await Node.findOne({id: nodeId}).exec();
   if (!node) {
     node = new Node({id: nodeId, content, title, topicFrames})
   }
-  node.content = content;
-  node.title = title;
+  node.set({
+    content,
+    title,
+    id: nodeId
+  })
   await node.save();
-  return res.status(200).send({message: 'Node updated successfully'});
+  return res.status(200).send({message: 'Node updated successfully', result: node});
 }
 exports.getList = async (req, res) => {
   res.status(200).json({result: await Node.find().exec()})

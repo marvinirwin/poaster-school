@@ -20,6 +20,8 @@ export type SkillTreeNode = CustomizableTree<SkillTreeNodeCustomProperties>;
 
 export type SizedTree = CustomizableTree<{ size: [number, number] } & SkillTreeNodeCustomProperties>;
 
+const getDefaultNodeId = (selectedNode?: SkillTreeNode) => camelCase(selectedNode?.title);
+
 export const SkillTree: React.FC<{
   tree: SkillTreeNode,
   userProfile: UserProfile,
@@ -86,10 +88,11 @@ export const SkillTree: React.FC<{
     func: updateNode,
     isFetchInProgress: isUpdatingNode,
   } = useFetchWithBodyCallback({
-    url: `/api/node/${selectedNode?.id}/update`,
+    url: `/api/node/${selectedNode?.id || getDefaultNodeId(selectedNode || undefined)}/update`,
     loadingMessage: "Updating skill tree content",
     errorMessage: "Error updating skill tree content.  Please try again or contact us",
-    method: "PUT"
+    method: "PUT",
+    deps: [selectedNode]
   })
 
   // TODO maybe add a specific role for this
@@ -117,7 +120,11 @@ export const SkillTree: React.FC<{
                   content: newContent,
                 }
               }
-              updateNode(node).then();
+              updateNode({
+                  body: node,
+                  url: `/api/node/${selectedNode.id || getDefaultNodeId(selectedNode)}/update`
+                }
+              ).then();
             }
           }
           canEdit={canEdit}
@@ -133,8 +140,11 @@ export const SkillTree: React.FC<{
               return <TreeNode
                 onStatusChanged={(newStatus: string) => {
                   const nodeId = treeNode.data.id;
-                  setSkillStatus({nodeId: nodeId, status: newStatus, userId: userProfile.id})
-                    .then(newUserProfile => setUserProfile(newUserProfile))
+                  setSkillStatus({
+                    body: {
+                      nodeId: nodeId, status: newStatus, userId: userProfile.id
+                    }
+                  }).then(newUserProfile => setUserProfile(newUserProfile))
                 }}
                 key={treeNode.data.id}
                 status={userProfile.subjectStatuses[treeNode.data.id]}

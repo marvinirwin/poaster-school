@@ -5,9 +5,10 @@ import {UserContext} from "./LoggedInUserContext";
 export const useNavigateToLoginIfNotAuthenticated = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const {authenticated} = useContext(UserContext);
+  const {authenticated, user} = useContext(UserContext);
   useEffect(() => {
     if (authenticated === false) {
+      debugger;
       navigate({pathname: '/login', search: location.search})
     }
   }, [authenticated])

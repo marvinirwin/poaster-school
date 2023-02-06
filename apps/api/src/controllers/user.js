@@ -86,7 +86,7 @@ exports.postLogin = (req, res, next) => {
   if (validator.isEmpty(req.body.password)) validationErrors.push({msg: 'Password cannot be blank.'});
 
   if (validationErrors.length) {
-    res.statusCode(401);
+    res.status(401);
     res.json({validationErrors})
     return;
   }
