@@ -674,3 +674,10 @@ exports.getUser = async (req, res) => {
   const send = sendUser(req, res);
   send(await User.findById(req.params.userId).exec());
 }
+
+exports.getLoggedInUser = async (req, res) => {
+  // TODO use this to restrict which users can see which other users
+  const currentUser = req.user;
+  const send = sendUser(req, res);
+  send(currentUser);
+}

@@ -117,3 +117,9 @@ export const useNodes = () => useFetchedData<SubjectNode[]>({
   loadingMessage: 'Fetching node list',
   errorMessage: "Fetching node list failed.  Please refresh the page or contact us"
 })
+
+export const useLoggedInUser = () => useFetchedData<UserProfile>({
+  url: apiUrl('user/profile'),
+  loadingMessage: 'Fetching logged in user',
+  errorMessage: "Fetching logged in user failed.  Are you logged in"
+})

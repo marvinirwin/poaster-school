@@ -2,6 +2,7 @@ import React from "react";
 import {useUsers} from "../lib/services/useFetchedData";
 import {LoadingSpinner} from "./LoadingSpinner";
 import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigateToLoginIfNotAuthenticated} from "../lib/useNavigateToLoginIfNotAuthenticated";
 
 const Pill: React.FC<{children: React.ReactNode, color: string}> = ({children, color}) => {
 //  className="inline-flex items-center bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">
@@ -18,9 +19,11 @@ const Pill: React.FC<{children: React.ReactNode, color: string}> = ({children, c
 };
 
 export const UserList: React.FC = () => {
+  useNavigateToLoginIfNotAuthenticated();
   const {result: users, isLoading} = useUsers();
   const navigate = useNavigate();
   const location = useLocation();
+
   return <section className="bg-gray-50 dark:bg-gray-900 p-5 relative">
   <div className="px-4 mx-auto max-w-screen-2xl lg:px-12">
       <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">

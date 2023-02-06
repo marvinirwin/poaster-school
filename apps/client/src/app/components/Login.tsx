@@ -1,12 +1,15 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import useFetchWithError from "../lib/fetchWithError";
 import {apiUrl} from "../lib/ApiUrl";
+import {UserContext} from "../lib/LoggedInUserContext";
+import {useLoggedInUser} from "../lib/services/useFetchedData";
 
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const {setAuthenticated, setUser} = useContext(UserContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const fetchWithError = useFetchWithError();
@@ -26,7 +29,18 @@ export const Login: React.FC = () => {
       ],
       errorMessage: "Login failed, please try again or contact us",
       loadingMessage: "Logging in"
+    });
+
+    const profile = await fetchWithError({
+      fetchParams: [
+        apiUrl("user/profile"),
+        { }
+      ],
+      errorMessage: "Fetching profile failed after logging in, please try again or contact us",
+      loadingMessage: "Fetch profile after logging in"
     })
+    setUser(profile.result)
+    setAuthenticated(true);
     // If there is no error
     navigate({pathname: '/', search: location.search})
   };

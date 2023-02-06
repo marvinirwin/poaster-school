@@ -2,18 +2,19 @@
 import React, {useMemo} from 'react';
 import {createBrowserRouter, Route, RouterProvider, useParams,} from 'react-router-dom';
 import {UserInfo} from "./components/User";
-import {UserSubjects} from "./components/Subjects";
 import {Login} from "./components/Login";
-import {Logout} from "./components/Logout";
 import {UserList} from "./components/UserList";
 import {Home} from "./components/Home";
 import {ToastList} from "./components/ToastList";
 import {ErrorProvider, useError} from "./lib/ErrorContext";
 import {useUser} from "./lib/services/useFetchedData";
 import {LoadingSpinner} from "./components/LoadingSpinner";
+import {UserProvider} from "./lib/LoggedInUserContext";
+import {useNavigateToLoginIfNotAuthenticated} from "./lib/useNavigateToLoginIfNotAuthenticated";
 
 
 const UserInfoRoute = () => {
+  useNavigateToLoginIfNotAuthenticated();
   const {userId} = useParams();
   const {isLoading, result: userProfile, setResult: setUserProfile} = useUser(userId || "");
   return isLoading ? <LoadingSpinner/> : (userProfile ?
@@ -47,10 +48,10 @@ const AppWrapper = () => {
 const App: React.FC = () => {
   const {errors} = useError();
   const toastErrors = useMemo(() => errors.map(error => ({id: error + Math.random(), text: error})), [errors]);
-  return <div>
-    <ToastList items={toastErrors}/>
-    <RouterProvider router={router}/>
-  </div>
+  return <UserProvider>
+      <ToastList items={toastErrors}/>
+      <RouterProvider router={router}/>
+  </UserProvider>
   /*
     <Switch>
       <Route exact path="/" component={Users} />

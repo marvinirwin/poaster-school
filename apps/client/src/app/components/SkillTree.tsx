@@ -1,9 +1,10 @@
-import React, {useMemo, useState} from "react";
+import React, {useContext, useMemo, useState} from "react";
 import {camelCase, flatten} from "lodash";
 import {flextree} from 'd3-flextree';
 import TreeNode from "./TreeNode";
 import {SubjectNode, useFetchWithBodyCallback, useNodes, UserProfile} from "../lib/services/useFetchedData";
 import {SkillModal} from "./SkillModal";
+import {UserContext} from "../lib/LoggedInUserContext";
 
 const maxHeight = 200;
 const maxWidth = 200;
@@ -29,7 +30,8 @@ export const SkillTree: React.FC<{
     userProfile,
     setUserProfile
   }) => {
-  const canEdit = userProfile.isTeacher;
+  const {user} = useContext(UserContext);
+  const canEdit = Boolean(user?.isAdmin || user?.isTeacher);
   const {
     result: nodeConfigurations,
     isLoading: isNodeListFetchInProgress
