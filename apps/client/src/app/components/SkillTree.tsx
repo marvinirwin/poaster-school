@@ -103,8 +103,8 @@ export const SkillTree: React.FC<{
   return <>
     {
       selectedNode ? <SkillModal
-          content={selectedNodeConfiguration.content || selectedNode?.content}
-          title={selectedNodeConfiguration.title || selectedNode?.title}
+          content={selectedNodeConfiguration?.content || selectedNode.content}
+          title={selectedNodeConfiguration?.title || selectedNode.title}
           setContent={
             async newContent => {
               let node: SubjectNode;
@@ -132,6 +132,7 @@ export const SkillTree: React.FC<{
           }
           canEdit={canEdit}
           topicFrames={selectedNodeConfiguration?.topicFrames || []}
+          onClose={() => setSelectedNode(null)}
         />
         : null
     }
