@@ -81,7 +81,7 @@ export const SkillTree: React.FC<{
     func: setSkillStatus,
     isFetchInProgress: isSettingSkillStatusInProgress
   } = useFetchWithBodyCallback<UserProfile>({
-    url: `/api/user/${userProfile.id}/skill`,
+    url: ``,
     loadingMessage: "Updating skill",
     errorMessage: "Error updating skill.  Please try again or contact us",
     method: "PUT"
@@ -90,7 +90,7 @@ export const SkillTree: React.FC<{
     func: updateNode,
     isFetchInProgress: isUpdatingNode,
   } = useFetchWithBodyCallback<SubjectNode>({
-    url: `/api/node/${selectedNode?.id || getDefaultNodeId(selectedNode || undefined)}/update`,
+    url: ``,
     loadingMessage: "Updating skill tree content",
     errorMessage: "Error updating skill tree content.  Please try again or contact us",
     method: "PUT",
@@ -140,6 +140,7 @@ export const SkillTree: React.FC<{
         flattenedTreeNodes
           .map(treeNode => {
               const isExpanded = Boolean(expandedState[treeNode.data.id])
+              const subjectStatus = userProfile.subjectStatuses[treeNode.data.id];
               return <TreeNode
                 onStatusChanged={async (newStatus: string) => {
                   const nodeId = treeNode.data.id;
@@ -148,11 +149,14 @@ export const SkillTree: React.FC<{
                       nodeId: nodeId,
                       status: newStatus,
                       userId: userProfile.id
-                    }
-                  }).then(newUserProfile => setUserProfile(newUserProfile))
+                    },
+                    url: `/api/user/${userProfile.id}/skill`
+                  }).then(newUserProfile => {
+                    setUserProfile(newUserProfile);
+                  })
                 }}
                 key={treeNode.data.id}
-                status={userProfile.subjectStatuses[treeNode.data.id]}
+                status={subjectStatus}
                 onShowContent={() => {
                   setSelectedNode(treeNode.data);
                 }}

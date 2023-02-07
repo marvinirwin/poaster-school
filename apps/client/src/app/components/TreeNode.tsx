@@ -1,5 +1,10 @@
 import React from "react";
 
+export enum SubjectStatuses {
+  complete = 'complete',
+  incomplete = 'incomplete'
+}
+
 export const classNames = (...classNames: (string | null | undefined)[]) => classNames.filter(Boolean).join(' ')
 
 export type TreeNodeProps = {
@@ -12,7 +17,7 @@ export type TreeNodeProps = {
   }
   & React.HTMLProps<HTMLDivElement>;
 
-function MarkIncompleteButton(props: { onClick: () => void, completed: boolean }) {
+function MarkIncompleteButton(props: { onClick: () => void }) {
   return <button
     type="button"
     className={
@@ -20,11 +25,11 @@ function MarkIncompleteButton(props: { onClick: () => void, completed: boolean }
     }
     onClick={props.onClick}
   >
-    {props.completed ? "Set Complete" : "Set Incomplete"}
+    Set Incomplete
   </button>;
 }
 
-function MarkCompleteButton(props: { onClick: () => void, completed: boolean }) {
+function MarkCompleteButton(props: { onClick: () => void }) {
   return <button
     type="button"
     className={
@@ -32,7 +37,7 @@ function MarkCompleteButton(props: { onClick: () => void, completed: boolean }) 
     }
     onClick={props.onClick}
   >
-    {props.completed ? "Set Complete" : "Set Incomplete"}
+    Set Complete
   </button>;
 }
 
@@ -47,8 +52,9 @@ const TreeNode: React.FC<TreeNodeProps> = (
     onShowContent,
     ...divProps
   }) => {
-  const isCompleted = status === 'completed';
-  const statusColor = isCompleted ? 'green' : 'red'
+
+  const isCompleted = status === SubjectStatuses.complete;
+  console.log(isCompleted, status)
   return (
     <div
       className={
@@ -64,16 +70,15 @@ const TreeNode: React.FC<TreeNodeProps> = (
         {
           isCompleted ? <MarkIncompleteButton
               onClick={() => {
-                onStatusChanged(isCompleted ? '' : 'complete')
+                onStatusChanged(isCompleted ? '' : SubjectStatuses.complete)
               }}
-              completed={isCompleted}/> :
+            /> :
             <MarkCompleteButton
               onClick={
                 () => {
-                  onStatusChanged(isCompleted ? '' : 'complete')
+                  onStatusChanged(isCompleted ? '' : SubjectStatuses.complete)
                 }
               }
-              completed={isCompleted}
             />
         }
       </div>

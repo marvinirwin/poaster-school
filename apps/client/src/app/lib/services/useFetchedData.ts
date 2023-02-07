@@ -38,14 +38,14 @@ export const useFetchedData = <T>(
   useEffect(() => {
     (async () => {
       setIsLoading(true);
-      const result = await fetchWithError({
+      const fetchResponse = await fetchWithError({
         fetchParams: [
           url,
         ],
         loadingMessage,
         errorMessage
       });
-      setResult(result.result);
+      setResult(fetchResponse.result);
       setIsLoading(false);
     })()
   }, [url])

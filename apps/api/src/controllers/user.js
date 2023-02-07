@@ -19,7 +19,8 @@ const sendUsers = (req, res) => users => {
 const sendUser = (req, res) => user => {
   const {profile, _id, email} = user;
   res.status(200);
-  res.json({result: userObjectToUserProfileObject({profile, _id, email})});
+  let result = userObjectToUserProfileObject({profile, _id, email});
+  res.json({result: result});
 }
 
 /**
@@ -108,7 +109,7 @@ exports.postLogin = (req, res, next) => {
       res.status(200)
       res.json({msg: 'Success! You are logged in.'});
 
-      const user = await User.findOne({ email });
+      const user = await User.findOne({email});
       if (!user) {
         throw new Error(`User with email ${email} not found`);
       }
@@ -615,21 +616,18 @@ exports.getUsers = async (req, res) => {
   res.sendStatus(401);
 }
 
-exports.putUserSkill = async (res, req) => {
+exports.putUserSkill = async (req, res) => {
   const currentUser = req.user;
   const {nodeId, status} = req.body;
   const {userId} = req.params;
   const userNotFoundMessage = `Could not find user with id: ${userId}`;
   const permissionErrorMessage = `You do not have permission to update this user's skills: ${userId}`;
 
-  const send = sendUsers(req, res);
+  const send = sendUser(req, res);
 
   const setUserSkillStatus = async user => {
-    await user.set('profile', {
-      ...user.profile,
-      subjectStatuses: {...user.profile.subjectStatuses, [nodeId]: status}
-    });
-
+    user.profile.subjectStatuses.set(nodeId, status)
+    await user.save()
   };
 
   const setStatusCodeAndError = (statusCode, message) => {
