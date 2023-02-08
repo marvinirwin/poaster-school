@@ -1,4 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind typography;
+@import "~@uiw/react-md-editor/dist/mdeditor.css";
+
+
 /* You can add global styles to this file, and also import other style files */

@@ -82,10 +82,10 @@ const TreeNode: React.FC<TreeNodeProps> = (
             }
           />
       }
-      <p className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">{title}</p>
+      <p className="my-4 text-lg font-semibold text-gray-900 dark:text-white">{title}</p>
       <div>
         <button type="button"
-                className="py-2 px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900"
+                className="mx-4 py-2 px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900"
                 onClick={() => {
                   onExpandToggled(!isExpanded);
                   setTimeout(() => {
@@ -101,7 +101,7 @@ const TreeNode: React.FC<TreeNodeProps> = (
             onShowContent()
           }}
         >
-          Content
+          Show Content
         </button>
       </div>
     </div>

@@ -181,6 +181,7 @@ export const SkillTree: React.FC<{
               const subjectStatus = userProfile.subjectStatuses[id];
               // @ts-ignore
               const title = configuration?.title || selectedNode.data.title || JSON.stringify(selectedNode.data);
+              const canExpand = Boolean(treeNode.data.children?.length);
               return <TreeNode
                 onStatusChanged={async (newStatus: string) => {
                   const nodeId = id;
@@ -219,9 +220,9 @@ export const SkillTree: React.FC<{
                     [id]: expanded
                   }))
                 }}
-                canExpand={Boolean(treeNode.data.children?.length)}
+                canExpand={canExpand}
                 isExpanded={isExpanded}
-                title={`${title}`}
+                title={`${title} ${treeNode.data.children?.length}`}
               />;
             }
           )
