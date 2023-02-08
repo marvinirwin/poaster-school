@@ -32,7 +32,6 @@ const TreeNode: React.FC<TreeNodeProps> = (
   }) => {
 
   const isCompleted = status === SubjectStatuses.complete;
-  console.log(isCompleted, status)
   return (
     <div
       className={
