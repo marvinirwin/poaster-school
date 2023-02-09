@@ -35,17 +35,14 @@ export const SkillModal: React.FC<SkillModalProps> = (
   }, [content])
   return <div
     tabIndex={-1}
-    className="fixed top-0 left-0 right-0 z-50 p-4 overflow-x-hidden overflow-y-auto inset-0 h-modal h-full prose"
-    style={{minWidth: '90vw'}}
+    className="fixed top-0 left-0 right-0 z-50  inset-0 h-modal h-full prose"
   >
-    <div className="relative w-full h-full">
-      <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 h-full w-full">
-
-        <div className="flex items-center justify-between border-b rounded-t dark:border-gray-600 p-5">
-          <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-            {title}
-          </h3>
-          <span>
+    <div className="bg-white rounded-lg shadow dark:bg-gray-700 w-full h-full p-4 overflow-x-auto overflow-y-auto">
+      <div className="flex items-center justify-between border-b rounded-t dark:border-gray-600">
+        <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+          {title}
+        </h3>
+        <span>
           {
             isEditing ?
               <>
@@ -71,57 +68,55 @@ export const SkillModal: React.FC<SkillModalProps> = (
               </>
               : null
           }
-            {
-              (canEdit && !isEditing) ? <button
-                  type="button"
-                  disabled={isEditing}
-                  className="ml-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  onClick={() => setIsEditing(true)}
-                > Edit
-                </button>
-                : null
-            }
-            <button
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg ml-4"
-              onClick={onClose}
-            > Close
+          {
+            (canEdit && !isEditing) ? <button
+                type="button"
+                disabled={isEditing}
+                className="ml-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                onClick={() => setIsEditing(true)}
+              > Edit
+              </button>
+              : null
+          }
+          <button
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg ml-4"
+            onClick={onClose}
+          > Close
             </button>
           </span>
-        </div>
-        {
-          !isEditing ? <div
-            className="p-5 space-y-6"
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(marked.parse(content)) || `<pre>There is no subject information here.  Please add some, or ask an editor to add some</pre>`
-            }}/> : null
-        }
-        {
-          isEditing ?
-            <div className="p-5">
-              <MDEditor
-                value={editableContent}
-                onChange={setEditableContent}
-                // TODO change height to be relative to the screen size or something
-                height={500}
-              />
-{/*
+      </div>
+      {
+        !isEditing ? <div
+          className=""
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(marked.parse(content)) || `<pre>There is no subject information here.  Please add some, or ask an editor to add some</pre>`
+          }}/> : null
+      }
+      {
+        isEditing ?
+          <div className="p-5">
+            <MDEditor
+              value={editableContent}
+              onChange={setEditableContent}
+              // TODO change height to be relative to the screen size or something
+              height={500}
+            />
+            {/*
               <MDEditor.Markdown
                 source={editableContent}
                 style={{whiteSpace: 'pre-wrap'}}
               />
 */}
-            </div>
-            : null
-        }
-      </div>
-      <div>
-        {
-          topicFrames.map(topicFrame => {
-            return <TopicFrameComponent topicFrame={topicFrame}/>
-          })
-        }
-      </div>
-
+          </div>
+          : null
+      }
+    </div>
+    <div>
+      {
+        topicFrames.map(topicFrame => {
+          return <TopicFrameComponent topicFrame={topicFrame}/>
+        })
+      }
     </div>
   </div>
 }

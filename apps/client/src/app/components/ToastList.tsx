@@ -101,7 +101,7 @@ export const ToastList: React.FC<ToastListProps> = ({errors: allErrors, loadingM
   };
 
   return (
-    <div style={{position: 'fixed', display: 'flex', flexFlow: 'column', alignItems: 'center', zIndex: '5', width: '100%'}}>
+    <div style={{position: 'fixed', display: 'flex', flexFlow: 'column', alignItems: 'center', zIndex: '51', width: '100%'}}>
       {errors.map(error => (
         <ToastDanger
           key={error.id}

@@ -13,9 +13,6 @@ export const UserInfo: React.FC<{
   }) => {
   const tree = useMemo(() => CollinsTreeToSkillTree(CollinsTree), [])
   return (
-    <div>
       <SkillTree tree={tree} userProfile={userProfile} setUserProfile={setUserProfile}/>
-    </div>
-
   );
 };

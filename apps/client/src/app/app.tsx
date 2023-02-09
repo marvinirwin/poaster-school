@@ -51,7 +51,7 @@ const AppWrapper = () => {
 }
 const App: React.FC = () => {
   const {errors} = useError();
-  const {loadingMessages} = useContext(LoadingContext)
+  const {loadingMessages} = useContext(LoadingContext);
   useNavigateToLoginIfNotAuthenticated();
   return <>
     <ToastList

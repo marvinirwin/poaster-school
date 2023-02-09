@@ -250,7 +250,7 @@ export const SkillTree: React.FC<{
                 }}
                 canExpand={canExpand}
                 isExpanded={isExpanded}
-                title={`${title} ${canExpand ? 'true' : 'false'}`}
+                title={title}
               />;
             }
           )
