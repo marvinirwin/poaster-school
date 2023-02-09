@@ -1,4 +1,8 @@
-export const ToastSuccess: React.FC<{children: React.ReactNode}> = ({children}) => {
+import {LoadingObject} from "../lib/UseLoadingContext";
+import React, {useEffect, useState} from 'react';
+
+
+export const ToastSuccess: React.FC<{ children: React.ReactNode }> = ({children}) => {
   return <div id="toast-success"
               className="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
               role="alert">
@@ -26,9 +30,9 @@ export const ToastSuccess: React.FC<{children: React.ReactNode}> = ({children}) 
     </button>
   </div>
 }
-export const ToastDanger: React.FC<{children: React.ReactNode}> = ({children}) => {
+export const ToastDanger: React.FC<{ children: React.ReactNode, onClose: () => void }> = ({children, onClose}) => {
   return <div id="toast-danger"
-              className="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
+              className="flex items-center p-2 w-full max-w-xl text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
               role="alert">
     <div
       className="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
@@ -42,7 +46,7 @@ export const ToastDanger: React.FC<{children: React.ReactNode}> = ({children}) =
     </div>
     <div className="ml-3 text-sm font-normal">{children}</div>
     <button type="button"
-            className="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
+            className="mx-1.5 my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
             data-dismiss-target="#toast-danger" aria-label="Close">
       <span className="sr-only">Close</span>
       <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
@@ -54,7 +58,7 @@ export const ToastDanger: React.FC<{children: React.ReactNode}> = ({children}) =
     </button>
   </div>
 }
-export const ToastWarning: React.FC<{children: React.ReactNode}> = ({children}) => {
+export const ToastWarning: React.FC<{ children: React.ReactNode }> = ({children}) => {
   return <div id="toast-warning"
               className="flex items-center w-full max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
               role="alert">
@@ -83,30 +87,45 @@ export const ToastWarning: React.FC<{children: React.ReactNode}> = ({children}) 
   </div>
 
 }
-import React, { useState } from 'react';
 
-interface ToastItem {
-  id: string;
-  text: string;
+type IdType = string | number;
+
+interface ToastListProps {
+  errors: LoadingObject[]
+  loadingMessages: LoadingObject[]
 }
 
-interface ToastProps {
-  items: ToastItem[];
-}
+export const ToastList: React.FC<ToastListProps> = ({errors: allErrors, loadingMessages}) => {
+  const [errors, setErrors] = useState<LoadingObject[]>([]);
+  const [previousErrorIds, setPreviousErrorIds] = useState<Set<IdType>>(new Set());
+  useEffect(() => {
+    const newErrors = allErrors.filter(err => !previousErrorIds.has(err.id));
+    setPreviousErrorIds(set => {
+      newErrors.forEach(e => set.add(e.id));
+      return new Set(set)
+    })
+    setErrors(errors => errors.concat(newErrors))
+  }, [allErrors])
 
-export const ToastList: React.FC<ToastProps> = ({ items }) => {
-  const [displayedItems, setDisplayedItems] = useState(items);
-
-  const handleRemoveItem = (id: string) => {
-    setDisplayedItems(displayedItems.filter(item => item.id !== id));
+  const closeError = (id: IdType) => {
+    setErrors(errors.filter(e => e.id !== id));
   };
 
+  console.log(allErrors, loadingMessages);
   return (
-    <div style={{ position: 'fixed', zIndex: '2' }}>
-      {displayedItems.map(item => (
-        <div key={item.id} onClick={() => handleRemoveItem(item.id)}>
-          {item.text}
-        </div>
+    <div style={{position: 'fixed', display: 'flex', flexFlow: 'column', alignItems: 'center', zIndex: '5'}}>
+      {errors.map(error => (
+        <ToastDanger
+          key={error.id}
+          onClose={() => closeError(error.id)}
+        >
+          <p>{error.message}</p>
+        </ToastDanger>
+      ))}
+      {loadingMessages.map(loading => (
+        <ToastSuccess key={loading.id}>
+          <p>{loading.message}</p>
+        </ToastSuccess>
       ))}
     </div>
   );

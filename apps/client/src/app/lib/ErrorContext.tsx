@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext } from 'react';
 
 interface Error {
   message: string;
+  id: number;
 }
 
 interface ErrorContextType {
@@ -33,7 +34,7 @@ const useError = () => {
   const { errors, addError } = useContext(ErrorContext);
 
   return {
-    errors: errors.map((error) => error.message),
+    errors,
     addError,
   };
 };

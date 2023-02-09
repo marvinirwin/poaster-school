@@ -7,7 +7,7 @@ export const useNavigateToLoginIfNotAuthenticated = () => {
   const location = useLocation();
   const {authenticated, user} = useContext(UserContext);
   useEffect(() => {
-    if (authenticated === false) {
+    if (authenticated === false && location.pathname !== '/login') {
       const search = new URLSearchParams(location.search);
       search.set('redirect_uri', `${window.location.pathname}${window.location.search}`)
       navigate({pathname: '/login', search: location.search})

@@ -38,15 +38,20 @@ export const useFetchedData = <T>(
   useEffect(() => {
     (async () => {
       setIsLoading(true);
-      const fetchResponse = await fetchWithError({
-        fetchParams: [
-          url,
-        ],
-        loadingMessage,
-        errorMessage
-      });
-      setResult(fetchResponse.result);
-      setIsLoading(false);
+      try {
+        const fetchResponse = await fetchWithError({
+          fetchParams: [
+            url,
+          ],
+          loadingMessage,
+          errorMessage
+        });
+        setResult(fetchResponse.result);
+      } catch(e) {
+
+      } finally {
+        setIsLoading(false);
+      }
     })()
   }, [url])
   return {
@@ -126,5 +131,5 @@ export const useNodes = () => useFetchedData<SubjectNode[]>({
 export const useLoggedInUser = () => useFetchedData<UserProfile>({
   url: apiUrl('user/profile'),
   loadingMessage: 'Fetching logged in user',
-  errorMessage: "Fetching logged in user failed.  Are you logged in"
+  errorMessage: "Fetching logged in user failed.  Are you logged in?"
 })

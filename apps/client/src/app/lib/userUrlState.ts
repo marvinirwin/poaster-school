@@ -11,7 +11,11 @@ export const useUrlState = <T>(key: string, defaultValue: T): [T, (value: T) => 
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set(key, JSON.stringify(value));
+    if (value === undefined){
+      searchParams.delete(key)
+    } else {
+      searchParams.set(key, JSON.stringify(value));
+    }
     navigate({
       pathname,
       search: searchParams.toString()

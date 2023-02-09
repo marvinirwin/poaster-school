@@ -19,7 +19,6 @@ const Pill: React.FC<{children: React.ReactNode, color: string}> = ({children, c
 };
 
 export const UserList: React.FC = () => {
-  useNavigateToLoginIfNotAuthenticated();
   const {result: users, isLoading} = useUsers();
   const navigate = useNavigate();
   const location = useLocation();

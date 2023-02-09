@@ -141,7 +141,6 @@ export const SkillTree: React.FC<{
   const canEdit = Boolean(user?.isAdmin || user?.isTeacher);
   // TODO maybe add a specific role for this
 
-
   const selectedNodeConfiguration = nodeConfigurationMap[selectedNode?.id || ""];
   return <>
     {

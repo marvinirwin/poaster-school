@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, {useMemo} from 'react';
+import React, {useContext, useMemo} from 'react';
 import {createBrowserRouter, Route, RouterProvider, useParams,} from 'react-router-dom';
 import {UserInfo} from "./components/User";
 import {Login} from "./components/Login";
@@ -11,10 +11,10 @@ import {useUser} from "./lib/services/useFetchedData";
 import {LoadingSpinner} from "./components/LoadingSpinner";
 import {UserProvider} from "./lib/LoggedInUserContext";
 import {useNavigateToLoginIfNotAuthenticated} from "./lib/useNavigateToLoginIfNotAuthenticated";
+import {LoadingContext, LoadingContextProvider} from "./lib/UseLoadingContext";
 
 
 const UserInfoRoute = () => {
-  useNavigateToLoginIfNotAuthenticated();
   const {userId} = useParams();
   const {isLoading, result: userProfile, setResult: setUserProfile} = useUser(userId || "");
   return isLoading ? <LoadingSpinner/> : (userProfile ?
@@ -41,17 +41,25 @@ const router = createBrowserRouter([
 ]);
 
 const AppWrapper = () => {
-  return <ErrorProvider>
-    <App/>
-  </ErrorProvider>
+  return <LoadingContextProvider>
+    <ErrorProvider>
+      <UserProvider>
+        <App/>
+      </UserProvider>
+    </ErrorProvider>
+  </LoadingContextProvider>
 }
 const App: React.FC = () => {
   const {errors} = useError();
-  const toastErrors = useMemo(() => errors.map(error => ({id: error + Math.random(), text: error})), [errors]);
-  return <UserProvider>
-      <ToastList items={toastErrors}/>
-      <RouterProvider router={router}/>
-  </UserProvider>
+  const {loadingMessages} = useContext(LoadingContext)
+  useNavigateToLoginIfNotAuthenticated();
+  return <>
+    <ToastList
+      errors={errors}
+      loadingMessages={loadingMessages}
+    />
+    <RouterProvider router={router}/>
+  </>
   /*
     <Switch>
       <Route exact path="/" component={Users} />
