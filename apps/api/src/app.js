@@ -127,7 +127,11 @@ app.use((req, res, next) => {
   next();
 });
 */
-app.use('/', express.static(path.join(process.env.PUBLIC_PATH), ));
+
+app.use('/', express.static(path.join(process.env.PUBLIC_PATH) ));
+const handler = (req, res) => res.sendFile((path.join(path.join(process.cwd(), process.env.PUBLIC_PATH, 'index.html'))))
+const routes = ["/", "/login", "/user/:userId", "/user/list"];
+routes.forEach( route => app.get(route, handler))
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/chart.js/dist'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/popper.js/dist/umd'), { maxAge: 31557600000 }));
 app.use('/js/lib', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js'), { maxAge: 31557600000 }));
