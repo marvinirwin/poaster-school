@@ -55,7 +55,7 @@ export const SkillTree: React.FC<{
   const {
     result: nodeConfigurations,
     setResult: setNodeConfigurations,
-    isLoading: isNodeListFetchInProgress
+    isLoading: isNodeConfigurationFetchInProgress
   } = useNodes();
 
   const nodeConfigurationMap = useMemo(() => {
@@ -144,7 +144,7 @@ export const SkillTree: React.FC<{
   const selectedNodeConfiguration = nodeConfigurationMap[selectedNode?.id || ""];
   return <>
     {
-      selectedNode ? <SkillModal
+      (selectedNode && !isNodeConfigurationFetchInProgress) ? <SkillModal
           content={selectedNodeConfiguration?.content || selectedNode.content}
           title={selectedNodeConfiguration?.title || selectedNode.title}
           setContent={
