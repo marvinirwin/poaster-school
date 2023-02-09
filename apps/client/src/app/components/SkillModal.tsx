@@ -35,10 +35,11 @@ export const SkillModal: React.FC<SkillModalProps> = (
   }, [content])
   return <div
     tabIndex={-1}
-    className="fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full prose"
+    className="fixed top-0 left-0 right-0 z-50 p-4 overflow-x-hidden overflow-y-auto inset-0 h-modal h-full prose"
+    style={{minWidth: '90vw'}}
   >
-    <div className="relative w-full h-full w-9xl h-full">
-      <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 h-full w-50">
+    <div className="relative w-full h-full">
+      <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 h-full w-full">
 
         <div className="flex items-center justify-between border-b rounded-t dark:border-gray-600 p-5">
           <h3 className="text-xl font-medium text-gray-900 dark:text-white">
@@ -96,10 +97,12 @@ export const SkillModal: React.FC<SkillModalProps> = (
         }
         {
           isEditing ?
-            <div className="container p-5">
+            <div className="p-5">
               <MDEditor
                 value={editableContent}
                 onChange={setEditableContent}
+                // TODO change height to be relative to the screen size or something
+                height={500}
               />
 {/*
               <MDEditor.Markdown
