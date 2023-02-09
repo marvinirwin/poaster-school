@@ -6,7 +6,7 @@
     "nx": "nx",
     "build": "nx run-many --target=build --projects=client,api --parallel=true",
     "build:digitalocean": "nx run-many --target=build --projects=client,api --parallel=true",
-    "start": "node dist/apps/api/main.js",
+    "start": "npm run build && node dist/apps/api/main.js",
     "postinstall": "npm rebuild node-sass"
   },
   "private": true,
