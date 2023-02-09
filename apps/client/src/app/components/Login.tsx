@@ -3,7 +3,6 @@ import {useLocation, useNavigate} from "react-router-dom";
 import useFetchWithError from "../lib/fetchWithError";
 import {apiUrl} from "../lib/ApiUrl";
 import {UserContext} from "../lib/LoggedInUserContext";
-import {useLoggedInUser} from "../lib/services/useFetchedData";
 
 
 export const Login: React.FC = () => {
@@ -41,7 +40,12 @@ export const Login: React.FC = () => {
     })
     setUser(profile.result)
     setAuthenticated(true);
-    // If there is no error
+    // Follow the redirect url, if possible
+    const searchParams = new URLSearchParams(window.location.search);
+    const redirectUri = searchParams.get('redirect_uri');
+    if (redirectUri) {
+      navigate(redirectUri)
+    }
     navigate({pathname: '/', search: location.search})
   };
 
@@ -58,7 +62,7 @@ export const Login: React.FC = () => {
             <a href="#" className="inline-flex items-center mb-4 text-xl font-semibold text-gray-900 dark:text-white">
               <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
                    alt="logo"/>
-              Poaster School
+              The Collins Institute
             </a>
             <h1 className="mb-2 text-2xl font-bold leading-tight tracking-tight text-gray-900 dark:text-white">
               Welcome back
