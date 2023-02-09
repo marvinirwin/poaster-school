@@ -4,6 +4,8 @@
   "license": "MIT",
   "scripts": {
     "nx": "nx",
+    "build": "nx run-many --target=build --projects=client,api --parallel=true",
+    "start": "node dist/apps/api/main.js",
     "postinstall": "npm rebuild node-sass"
   },
   "private": true,
