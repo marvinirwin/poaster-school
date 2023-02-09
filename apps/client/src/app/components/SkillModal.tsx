@@ -85,6 +85,17 @@ export const SkillModal: React.FC<SkillModalProps> = (
             </button>
           </span>
       </div>
+      <br/>
+      {
+        topicFrames.map(
+          (topicFrame, i) => {
+            return <TopicFrameComponent
+              isFirst={i === 0}
+              topicFrame={topicFrame}
+            />
+          })
+      }
+      <br/>
       {
         !isEditing ? <div
           className=""
@@ -109,13 +120,6 @@ export const SkillModal: React.FC<SkillModalProps> = (
 */}
           </div>
           : null
-      }
-    </div>
-    <div>
-      {
-        topicFrames.map(topicFrame => {
-          return <TopicFrameComponent topicFrame={topicFrame}/>
-        })
       }
     </div>
   </div>
