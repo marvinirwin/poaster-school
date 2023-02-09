@@ -1,4 +1,4 @@
-import {useState, useContext} from 'react';
+import {useState, useContext, useCallback} from 'react';
 import {ErrorContext, useError} from './ErrorContext';
 import * as url from "url";
 import {LoadingContext} from "./UseLoadingContext";
@@ -6,7 +6,7 @@ import {LoadingContext} from "./UseLoadingContext";
 const useFetchWithError = () => {
   const {addError} = useError();
   const {addLoadingMessage} = useContext(LoadingContext);
-  return async (
+  return useCallback(async (
     {
       fetchParams,
       errorMessage,
@@ -42,7 +42,7 @@ const useFetchWithError = () => {
     } finally {
       onLoadingFinished()
     }
-  };
+  }, [addError, addLoadingMessage]);
 };
 
 export default useFetchWithError;

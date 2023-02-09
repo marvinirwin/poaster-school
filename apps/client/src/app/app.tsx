@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import React, {useContext, useMemo} from 'react';
+import React, {useContext, useEffect, useMemo} from 'react';
 import {createBrowserRouter, Route, RouterProvider, useParams,} from 'react-router-dom';
 import {UserInfo} from "./components/User";
 import {Login} from "./components/Login";
@@ -60,15 +60,6 @@ const App: React.FC = () => {
     />
     <RouterProvider router={router}/>
   </>
-  /*
-    <Switch>
-      <Route exact path="/" component={Users} />
-      <Route exact path="/users/:userId" component={UserDetail} />
-      <Route exact path="/users/:userId/subjects" component={UserSubjects} />
-      <Route exact path="/login" component={Login} />
-      <Route exact path="/logout" component={Logout} />
-    </Switch>
-  */
 };
 
 export default AppWrapper;
