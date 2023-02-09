@@ -5,10 +5,16 @@ import TreeNode from "./TreeNode";
 import {SubjectNode, useFetchWithBodyCallback, useNodes, UserProfile} from "../lib/services/useFetchedData";
 import {SkillModal} from "./SkillModal";
 import {UserContext} from "../lib/LoggedInUserContext";
-import * as d3 from 'd3'
+import {useUrlState} from "../lib/userUrlState";
 
-const maxHeight = 200;
+const maxHeight = 300;
 const maxWidth = 300;
+
+const flattenTree = <T extends { children?: T[] }>(node: T, a: T[] = []) => {
+  a.push(node)
+  node.children?.map(child => flattenTree(child, a))
+  return a;
+}
 
 export type SkillTreeNodeCustomProperties = { title: string, content: string };
 
@@ -28,6 +34,11 @@ interface TreeNode {
 
 const getDefaultNodeId = (selectedNode?: SkillTreeNode) => camelCase(selectedNode?.title);
 
+
+function getParent(flattenedTree: ({ children: CustomizableTree<SkillTreeNodeCustomProperties>[]; id: string | number } & Omit<SkillTreeNodeCustomProperties, "children">)[], selectedNode: { children: CustomizableTree<SkillTreeNodeCustomProperties>[]; id: string | number } & Omit<SkillTreeNodeCustomProperties, "children">) {
+  return flattenedTree.find(node => node.children.includes(selectedNode));
+}
+
 export const SkillTree: React.FC<{
   tree: SkillTreeNode,
   userProfile: UserProfile,
@@ -38,25 +49,36 @@ export const SkillTree: React.FC<{
     userProfile,
     setUserProfile
   }) => {
+  const flattenedTree = useMemo(() => flattenTree(tree), [tree]);
   const {user} = useContext(UserContext);
-  const canEdit = Boolean(user?.isAdmin || user?.isTeacher);
+  const [urlNodeId, setUrlNodeId] = useUrlState('skill', undefined)
   const {
     result: nodeConfigurations,
     setResult: setNodeConfigurations,
     isLoading: isNodeListFetchInProgress
   } = useNodes();
+
   const nodeConfigurationMap = useMemo(() => {
     return Object.fromEntries((nodeConfigurations || []).map((nodeConfiguration) => [nodeConfiguration.id, nodeConfiguration])) as Record<string, SubjectNode>
   }, [nodeConfigurations])
   const [selectedNode, setSelectedNode] = useState<SkillTreeNode | null>(null);
-  const walkTree = <T extends { children?: T[] }>(node: T, a: T[] = []) => {
-    a.push(node)
-    node.children?.map(child => walkTree(child, a))
-    return a;
-  }
   const [expandedState, setExpandedState] = useState<Record<string, boolean>>(() => Object.fromEntries(
     [tree, ...tree.children].map(t => [t.id, true])
   ));
+  useEffect(() => {
+    // If the selectedNode is not visible, expand until the selected node is visible
+    if (selectedNode) {
+      const expandAllParents = (node: SkillTreeNode) => {
+        const parent = getParent(flattenedTree, node)
+        if (parent && !expandedState[parent.id]) {
+          // expand until parent
+          expandedState[parent.id] = true;
+          expandAllParents(parent)
+        }
+      }
+      expandAllParents(selectedNode)
+    }
+  }, [selectedNode])
   const {nodes: flattenedTreeNodes, minLeft, minTop} = useMemo(() => {
     const giveHeightAndWidth = (drawTree: SkillTreeNode): SizedTree => {
       const isExpanded = Boolean(expandedState[drawTree.id]);
@@ -108,16 +130,19 @@ export const SkillTree: React.FC<{
     method: "PUT",
     deps: [selectedNode]
   })
-
+  useEffect(() => {
+    if (urlNodeId) {
+      const selectedNode = flattenedTree.find(treeNode => treeNode.id === urlNodeId);
+      if (selectedNode) {
+        setSelectedNode(selectedNode);
+      }
+    }
+  }, [urlNodeId, tree])
+  const canEdit = Boolean(user?.isAdmin || user?.isTeacher);
   // TODO maybe add a specific role for this
 
+
   const selectedNodeConfiguration = nodeConfigurationMap[selectedNode?.id || ""];
-  const [svgRef, setSvgRef] = useState<SVGElement | null>();
-  useEffect(() => {
-    if (svgRef) {
-      // buildRadialD3Tree(tree, 'test')
-    }
-  }, [svgRef])
   return <>
     {
       selectedNode ? <SkillModal
@@ -150,7 +175,10 @@ export const SkillTree: React.FC<{
           }
           canEdit={canEdit}
           topicFrames={selectedNodeConfiguration?.topicFrames || []}
-          onClose={() => setSelectedNode(null)}
+          onClose={() => {
+            setUrlNodeId(undefined)
+            setSelectedNode(null);
+          }}
         />
         : null
     }
@@ -184,10 +212,9 @@ export const SkillTree: React.FC<{
               const canExpand = Boolean(treeNode.data.children?.length);
               return <TreeNode
                 onStatusChanged={async (newStatus: string) => {
-                  const nodeId = id;
                   setSkillStatus({
                     body: {
-                      nodeId: nodeId,
+                      nodeId: id,
                       status: newStatus,
                       userId: userProfile.id
                     },
@@ -201,6 +228,8 @@ export const SkillTree: React.FC<{
                 onShowContent={() => {
                   // @ts-ignore
                   setSelectedNode(selectedNode.data);
+                  // @ts-ignore
+                  setUrlNodeId(selectedNode.data.id);
                 }}
                 style={{
                   position: 'absolute',
@@ -222,7 +251,7 @@ export const SkillTree: React.FC<{
                 }}
                 canExpand={canExpand}
                 isExpanded={isExpanded}
-                title={`${title} ${treeNode.data.children?.length}`}
+                title={`${title} ${canExpand ? 'true' : 'false'}`}
               />;
             }
           )

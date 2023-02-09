@@ -34,12 +34,11 @@ export const SkillModal: React.FC<SkillModalProps> = (
     setEditableContent(content)
   }, [content])
   return <div
-    id="extralarge-modal"
     tabIndex={-1}
     className="fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full prose"
   >
-    <div className="relative w-full h-full max-w-7xl md:h-auto">
-      <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+    <div className="relative w-full h-full w-9xl h-full">
+      <div className="relative bg-white rounded-lg shadow dark:bg-gray-700 h-full w-50">
 
         <div className="flex items-center justify-between border-b rounded-t dark:border-gray-600 p-5">
           <h3 className="text-xl font-medium text-gray-900 dark:text-white">

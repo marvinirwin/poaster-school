@@ -84,17 +84,21 @@ const TreeNode: React.FC<TreeNodeProps> = (
       }
       <p className="my-4 text-lg font-semibold text-gray-900 dark:text-white">{title}</p>
       <div>
-        <button type="button"
-                className="mx-4 py-2 px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900"
-                onClick={() => {
-                  onExpandToggled(!isExpanded);
-                  setTimeout(() => {
-                    ref && ref.scrollIntoView({behavior: "smooth", block: "center", inline: 'center'});
-                  }, 1000)
-                }}
-        >
-          {isExpanded ? 'Close' : 'Expand'}
-        </button>
+        {
+          canExpand ? <button
+              type="button"
+              className="mx-4 py-2 px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900"
+              onClick={() => {
+                onExpandToggled(!isExpanded);
+                setTimeout(() => {
+                  ref && ref.scrollIntoView({behavior: "smooth", block: "center", inline: 'center'});
+                }, 1000)
+              }}
+            >
+              {isExpanded ? 'Close' : 'Expand'}
+            </button> :
+            null
+        }
         <button
           className="py-2 px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:focus:ring-primary-900"
           onClick={() => {
@@ -106,58 +110,60 @@ const TreeNode: React.FC<TreeNodeProps> = (
       </div>
     </div>
   </div>;
-  return (
-    <div
-      ref={setRef}
-      className={
-        classNames(
-          className,
-          "max-w-sm bg-white border border-gray-200 shadow dark:bg-gray-800 dark:border-gray-700 flex-col items-center flex"
-        )
-      }
-      {...divProps}
-    >
-      <h6 className="text-l font-bold tracking-tight text-gray-900 dark:text-white m-1 inline-block">{title}</h6>
-      <div>
-      </div>
-      <div className={'w-full flex'}>
-        {
-          canExpand ? <button
+  /*
+    return (
+      <div
+        ref={setRef}
+        className={
+          classNames(
+            className,
+            "max-w-sm bg-white border border-gray-200 shadow dark:bg-gray-800 dark:border-gray-700 flex-col items-center flex"
+          )
+        }
+        {...divProps}
+      >
+        <h6 className="text-l font-bold tracking-tight text-gray-900 dark:text-white m-1 inline-block">{title}</h6>
+        <div>
+        </div>
+        <div className={'w-full flex'}>
+          {
+            canExpand ? <button
+              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 flex-grow"
+              onClick={() => {
+                onExpandToggled(!isExpanded);
+                setTimeout(() => {
+                  ref && ref.scrollIntoView({behavior: "smooth", block: "center", inline: 'center'});
+                }, 1000)
+              }}
+            >
+              {isExpanded ? 'Close' : 'Open'}
+            </button> : null
+          }
+          <button
             className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 flex-grow"
             onClick={() => {
-              onExpandToggled(!isExpanded);
-              setTimeout(() => {
-                ref && ref.scrollIntoView({behavior: "smooth", block: "center", inline: 'center'});
-              }, 1000)
+              onShowContent()
             }}
           >
-            {isExpanded ? 'Close' : 'Open'}
-          </button> : null
-        }
-        <button
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 flex-grow"
-          onClick={() => {
-            onShowContent()
-          }}
-        >
-          Content
-        </button>
-        {
-          isCompleted ? <MarkIncompleteButton
-              onClick={() => {
-                onStatusChanged(isCompleted ? '' : SubjectStatuses.complete)
-              }}
-            /> :
-            <MarkCompleteButton
-              onClick={
-                () => {
+            Content
+          </button>
+          {
+            isCompleted ? <MarkIncompleteButton
+                onClick={() => {
                   onStatusChanged(isCompleted ? '' : SubjectStatuses.complete)
+                }}
+              /> :
+              <MarkCompleteButton
+                onClick={
+                  () => {
+                    onStatusChanged(isCompleted ? '' : SubjectStatuses.complete)
+                  }
                 }
-              }
-            />
-        }
+              />
+          }
+        </div>
       </div>
-    </div>
-  );
+    );
+  */
 };
 export default TreeNode;
