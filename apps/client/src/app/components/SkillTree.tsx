@@ -79,7 +79,7 @@ export const SkillTree: React.FC<{
       expandAllParents(selectedNode)
     }
   }, [selectedNode])
-  const {nodes: flattenedTreeNodes, minLeft, minTop} = useMemo(() => {
+  const {nodes: flattenedPrunedTreeNodes, minLeft, minTop} = useMemo(() => {
     const giveHeightAndWidth = (drawTree: SkillTreeNode): SizedTree => {
       const isExpanded = Boolean(expandedState[drawTree.id]);
       return {
@@ -194,7 +194,7 @@ export const SkillTree: React.FC<{
       }
     }>
       {
-        flattenedTreeNodes
+        flattenedPrunedTreeNodes
           /*
                   radialTreeNodes
           */
@@ -204,11 +204,11 @@ export const SkillTree: React.FC<{
               const top = treeNode.top;
               const configuration = nodeConfigurationMap[id];
               const isExpanded = Boolean(expandedState[id])
-              const selectedNode = flattenedTreeNodes.find(flattenedTreeNode => flattenedTreeNode.data.id === id);
+              const selectedNode = flattenedPrunedTreeNodes.find(flattenedTreeNode => flattenedTreeNode.data.id === id);
               const subjectStatus = userProfile.subjectStatuses[id];
               // @ts-ignore
               const title = configuration?.title || selectedNode.data.title || JSON.stringify(selectedNode.data);
-              const canExpand = Boolean(treeNode.data.children?.length);
+              const canExpand = Boolean(flattenedTree.find(n => n.children.length));
               return <TreeNode
                 onStatusChanged={async (newStatus: string) => {
                   setSkillStatus({
