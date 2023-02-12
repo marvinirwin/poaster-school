@@ -35,6 +35,7 @@ export const ToastDanger: React.FC<{ children: React.ReactNode, onClose: () => v
     </div>
     <div className="ml-3 text-sm font-normal">{children}</div>
     <button type="button"
+            onClick={onClose}
             className="mx-1.5 my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
             data-dismiss-target="#toast-danger" aria-label="Close">
       <span className="sr-only">Close</span>
@@ -105,7 +106,7 @@ export const ToastList: React.FC<ToastListProps> = ({errors: allErrors, loadingM
       {errors.map(error => (
         <ToastDanger
           key={error.id}
-          onClose={() => closeError(error.id)}
+          onClose={() => {closeError(error.id)}}
         >
           <p>{error.message}</p>
         </ToastDanger>

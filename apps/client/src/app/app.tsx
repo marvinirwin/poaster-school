@@ -12,6 +12,8 @@ import {LoadingSpinner} from "./components/LoadingSpinner";
 import {UserProvider} from "./lib/LoggedInUserContext";
 import {useNavigateToLoginIfNotAuthenticated} from "./lib/useNavigateToLoginIfNotAuthenticated";
 import {LoadingContext, LoadingContextProvider} from "./lib/UseLoadingContext";
+import { Profile } from './components/Profile';
+import { Signup } from './components/Signup';
 
 
 const UserInfoRoute = () => {
@@ -31,12 +33,20 @@ const router = createBrowserRouter([
     element: <Login/>
   },
   {
+    path: "/signup",
+    element: <Signup/>
+  },
+  {
     path: '/user/list',
     element: <UserList/>
   },
   {
     path: '/user/:userId',
     element: <UserInfoRoute/>
+  },
+  {
+    path: '/profile',
+    element: <Profile/>
   }
 ]);
 

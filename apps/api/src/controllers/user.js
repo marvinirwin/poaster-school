@@ -155,16 +155,18 @@ exports.postSignup = (req, res, next) => {
   if (!validator.isEmail(req.body.email)) validationErrors.push({msg: 'Please enter a valid email address.'});
   if (!validator.isLength(req.body.password, {min: 8})) validationErrors.push({msg: 'Password must be at least 8 characters long'});
   if (req.body.password !== req.body.confirmPassword) validationErrors.push({msg: 'Passwords do not match'});
-
   if (validationErrors.length) {
     req.flash('errors', validationErrors);
-    return res.redirect('/signup');
+    return res.status(400).send(validationErrors.toString());
   }
   req.body.email = validator.normalizeEmail(req.body.email, {gmail_remove_dots: false});
 
   const user = new User({
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password,
+    profile: {
+      username: req.body.username
+    }
   });
 
   User.findOne({email: req.body.email}, (err, existingUser) => {
@@ -183,7 +185,7 @@ exports.postSignup = (req, res, next) => {
         if (err) {
           return next(err);
         }
-        res.redirect('/');
+        res.json({message: 'success'});
       });
     });
   });
@@ -212,17 +214,17 @@ exports.postUpdateProfile = (req, res, next) => {
     return res.redirect('/account');
   }
   req.body.email = validator.normalizeEmail(req.body.email, {gmail_remove_dots: false});
-
   User.findById(req.user.id, (err, user) => {
     if (err) {
       return next(err);
     }
     if (user.email !== req.body.email) user.emailVerified = false;
+    if (req.body.password) user.password = req.body.password;
     user.email = req.body.email || '';
-    user.profile.name = req.body.name || '';
-    user.profile.gender = req.body.gender || '';
-    user.profile.location = req.body.location || '';
-    user.profile.website = req.body.website || '';
+    user.profile.username = req.body.username || '';
+    user.profile.firstName = req.body.firstName || '';
+    user.profile.lastName = req.body.lastName || '';
+    user.profile.picture = req.body.profilePicture || '';
     user.save((err) => {
       if (err) {
         if (err.code === 11000) {
@@ -232,7 +234,7 @@ exports.postUpdateProfile = (req, res, next) => {
         return next(err);
       }
       req.flash('success', {msg: 'Profile information has been updated.'});
-      res.redirect('/account');
+      res.json({message: 'success'});
     });
   });
 };

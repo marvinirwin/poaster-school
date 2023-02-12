@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import useFetchWithError from "../lib/fetchWithError";
 import {apiUrl} from "../lib/ApiUrl";
 import {UserContext} from "../lib/LoggedInUserContext";
@@ -68,9 +68,8 @@ export const Login: React.FC = () => {
               Welcome back
             </h1>
             <p className="text-sm font-light text-gray-500 dark:text-gray-300">
-              Start your website in seconds. Don’t have an account? <a href="#"
-                                                                       className="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign
-              up</a>.
+              Start your website in seconds. Don’t have an account? 
+              <Link to="/signup"className="font-medium text-primary-600 hover:underline dark:text-primary-500">Signup</Link>.
             </p>
             <form className="mt-4 space-y-6 sm:mt-6" action="#">
               <div className="grid gap-6 sm:grid-cols-2">

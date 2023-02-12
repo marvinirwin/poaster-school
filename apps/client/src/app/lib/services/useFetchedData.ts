@@ -6,7 +6,9 @@ import {digitalassetlinks_v1} from "googleapis";
 import {TopicFrame} from "../../components/SkillModal";
 
 export type UserProfile = {
-  name?: string,
+  username?: string,
+  firstName?: string,
+  lastName?: string,
   gender?: string,
   location?: string,
   website?: string,
