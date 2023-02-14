@@ -24,11 +24,13 @@ const userSchema = new mongoose.Schema({
   tokens: Array,
 
   profile: {
-    name: String,
+    username: String,
+    firstName: String,
+    lastName: String,
     gender: String,
     location: String,
     website: String,
-    picture: String,
+    profilePicture: String,
     isAdmin: Boolean,
     isStudent: Boolean,
     isTeacher: Boolean,
