@@ -2,17 +2,22 @@ import React, {useState} from 'react';
 import { apiUrl } from '../lib/ApiUrl';
 import useFetchWithError from '../lib/fetchWithError';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from "react-hook-form";
 
 export const Signup: React.FC = () => {
-    const [username, setUsername] = useState<string|undefined>('');
-    const [email, setEmail] = useState<string|undefined>('');
-    const [password, setPassword] = useState<string|undefined>('');
-    const [confirmPassword, setConfirmPassword] = useState<string|undefined>('');
     const fetchWithError = useFetchWithError();
     const navigate = useNavigate();
+    const { register, handleSubmit, watch, formState: { errors } } = useForm();
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+//    const [username, setUsername] = useState<string|undefined>('');
+//    const [email, setEmail] = useState<string|undefined>('');
+
+    const validatePassword = (val: string) => {
+        return watch('password') === val || "The passwords do not match"
+    }
+
+    const onSubmit = async (data: any) => {
+        const {username, email, password, confirmPassword} = data;
         const res = await fetchWithError({
             fetchParams: [
               apiUrl("signup"),
@@ -32,11 +37,18 @@ export const Signup: React.FC = () => {
         if (res.message === 'success') navigate("/");
     }
 
+    const renderValidationErrors = () => {
+        const errorsArray = Object.keys(errors);
+        return errorsArray.map((err: string) => (
+            <p className='text-red-700' key={err}>{errors[err]?.message?.toString()}</p>
+        ))
+    }
+
     return (
         <section className="bg-white dark:bg-gray-900">
             <div className="grid lg:h-screen lg:grid-cols-2">
                 <div className="flex justify-center items-center py-6 px-4 lg:py-0 sm:px-0">
-                    <form onSubmit={handleSubmit} className="space-y-4 max-w-md md:space-y-6 xl:max-w-xl">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-md md:space-y-6 xl:max-w-xl">
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Your Best Work Starts Here</h2>
                         <div className="items-center space-y-3 space-x-0 sm:flex sm:space-x-4 sm:space-y-0">
                             <a href="#" className="w-full inline-flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
@@ -59,19 +71,19 @@ export const Signup: React.FC = () => {
                         </div>
                         <div>
                             <label htmlFor="username" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">What should we call you?</label>
-                            <input value={username} onChange={(e) => setUsername(e.target.value)} type="text" name="username" id="username" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. BonnieGreen" required={false} />
+                            <input {...register('username', {required: "A username is required", maxLength: 20})} defaultValue="" type="text" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="e.g. BonnieGreen" required={false} />
                             </div>
                         <div>
                             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your email</label>
-                            <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required={false} />
+                            <input {...register('email', {required: "A valid email is required"})} defaultValue="" type="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required={false} />
                         </div>
                         <div>
                             <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Your password</label>
-                            <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" name="password" id="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required={false} />
+                            <input {...register('password', {required: "A password of at least 8 characters is required", minLength: {value: 8, message: "Password must have at least 8 characters"}})} type="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required={false} />
                         </div>
                         <div>
                             <label htmlFor="confirmPassword" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Confirm your password</label>
-                            <input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} type="password" name="confirmPassword" id="confirmPassword" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required={false} />
+                            <input {...register('confirmPassword', {validate: validatePassword})} type="password" placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required={false} />
                         </div>
                         <div className="space-y-3">
                             <div className="flex items-start">
@@ -91,6 +103,7 @@ export const Signup: React.FC = () => {
                                 </div>
                             </div>
                         </div>
+                        {renderValidationErrors()}
                         <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-700">Create an account</button>
                         <p className="text-sm font-light text-gray-500 dark:text-gray-300">
                             Already have an account? <a href="#" className="font-medium text-primary-600 hover:underline dark:text-primary-500">Login here</a>

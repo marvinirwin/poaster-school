@@ -224,7 +224,7 @@ exports.postUpdateProfile = (req, res, next) => {
     user.profile.username = req.body.username || '';
     user.profile.firstName = req.body.firstName || '';
     user.profile.lastName = req.body.lastName || '';
-    user.profile.picture = req.body.profilePicture || '';
+    user.profile.profilePicture = req.body.profilePicture || '';
     user.save((err) => {
       if (err) {
         if (err.code === 11000) {

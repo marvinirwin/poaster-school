@@ -12,7 +12,7 @@ export type UserProfile = {
   gender?: string,
   location?: string,
   website?: string,
-  picture?: string,
+  profilePicture?: string,
   isAdmin: boolean,
   isStudent: boolean,
   isTeacher: boolean,

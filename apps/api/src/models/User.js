@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
     gender: String,
     location: String,
     website: String,
-    picture: String,
+    profilePicture: String,
     isAdmin: Boolean,
     isStudent: Boolean,
     isTeacher: Boolean,

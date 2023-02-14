@@ -61,7 +61,7 @@ export const UserList: React.FC = () => {
                     >
                       <th scope="row" className="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         <div className="flex items-center">
-                          {user.picture ? <img src={user.picture} alt="" className="w-auto h-8 mr-3 rounded-full"/> : null}
+                          {user.profilePicture ? <img src={user.profilePicture} alt="" className="w-auto h-8 mr-3 rounded-full"/> : null}
                           {user.username || user.email}
                         </div>
                       </th>
